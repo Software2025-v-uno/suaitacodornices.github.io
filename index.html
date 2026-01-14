@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -853,17 +852,13 @@ Reporte generado a partir de los registros de gestión.</p>
 <!-- Detalles dinámicos -->
 </div>
 <div class="receipt-total" id="receipt-total">$0</div>
-
 <!-- Contenedor del QR (posición controlada por JS) -->
-<div id="receipt-qr-container" style="text-align:center;margin:12px 0;"></div>
-
-
+<div id="receipt-qr-container" style="margin:12px 0;"></div>
 <!-- Mensaje legal (siempre visible) -->
 <div style="margin-top:12px;font-size:9px;color:#666;text-align:center;line-height:1.3;">
 Este recibo es un comprobante de control interno y no constituye<br>
 una factura de venta ni documento equivalente según el Estatuto Tributario.
 </div>
-
 <!-- Mensaje de pago (solo en ventas) -->
 <div id="receipt-payment-info" class="receipt-footer" style="margin-top:16px;display:none;">
 <p style="font-size: 10px; color: #999; font-style: italic;">Para realizar el pago de su compra, puede hacerlo</p>
@@ -875,8 +870,6 @@ una factura de venta ni documento equivalente según el Estatuto Tributario.
 <p>Gracias por su compra</p>
 <p></p>
 </div>
-
-
 <!-- Pie genérico (siempre visible al final) -->
 <div class="receipt-footer" style="margin-top:12px;">
 <div style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 10px; text-align: center;">
@@ -1008,10 +1001,9 @@ const db = new DBManager();
 <script>
 // === FUNCIONES AUXILIARES ===
 function generateQR(text, size = 80) {
-  const encoded = encodeURIComponent(text);
-  return `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encoded}`;
+const encoded = encodeURIComponent(text);
+return `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encoded}`;
 }
-
 // === NEGOCIO ===
 class BusinessManager {
 constructor() {
@@ -1266,19 +1258,15 @@ setTimeout(() => n.remove(), 500);
 downloadReceipt(saleId) {
 const sale = this.ventas.find(v => v.id === saleId);
 if (!sale) return;
-
 const receiptTemplate = document.getElementById('receipt-template');
 const receiptDetails = document.getElementById('receipt-details');
 const receiptFactura = document.getElementById('receipt-factura');
 const receiptTotal = document.getElementById('receipt-total');
 const qrContainer = document.getElementById('receipt-qr-container');
 const paymentInfo = document.getElementById('receipt-payment-info');
-
-
 // Llenar datos
 receiptFactura.textContent = sale.factura;
 receiptTotal.textContent = `$${sale.total.toLocaleString('es-CO')}`;
-
 let detailsHTML = `
 <div class="receipt-detail"><span>Cliente:</span><span>${sale.cliente}</span></div>
 <div class="receipt-detail"><span>Cubetas:</span><span>${sale.cubetas}</span></div>
@@ -1289,20 +1277,19 @@ detailsHTML += `<div class="receipt-detail"><span>Crédito:</span><span>$${sale.
 }
 detailsHTML += `<div class="receipt-detail"><span>Fecha:</span><span>${this.formatDateTime(sale.fechaCompleta)}</span></div>`;
 receiptDetails.innerHTML = detailsHTML;
-
 // Mostrar mensaje de pago
 paymentInfo.style.display = 'block';
-
 // Generar QR con todos los datos
-const qrText = `${sale.factura}\n${sale.cliente}\n$${sale.total.toLocaleString('es-CO')}\n${this.formatDateTime(sale.fechaCompleta)}`;
+const qrText = `${sale.factura}
+${sale.cliente}
+$${sale.total.toLocaleString('es-CO')}
+${this.formatDateTime(sale.fechaCompleta)}`;
 const qrUrl = generateQR(qrText, 80);
-
 // Alinear QR a la IZQUIERDA (al final)
-qrContainer.innerHTML = `<img src="${qrUrl}" alt="QR" style="width:80px;height:80px;display:block;margin:center;">`;
-
+qrContainer.innerHTML = `<img src="${qrUrl}" alt="QR" style="width:80px;height:80px;display:block;margin-left:0;margin-right:auto;">`;
 // Mostrar y generar PDF
 receiptTemplate.style.display = 'block';
-html2canvas(receiptTemplate).then(canvas => {
+html2canvas(receiptTemplate, { scale: 1 }).then(canvas => {
 const pdf = new jsPDF('p', 'mm', 'a4');
 const imgData = canvas.toDataURL('image/png');
 const imgWidth = 210;
@@ -1326,19 +1313,16 @@ receiptTemplate.style.display = 'none';
 downloadExpenseReceipt(expenseId) {
 const expense = this.gastos.find(g => g.id === expenseId);
 if (!expense) return;
-
 const receiptTemplate = document.getElementById('receipt-template');
 const receiptDetails = document.getElementById('receipt-details');
 const receiptFactura = document.getElementById('receipt-factura');
 const receiptTotal = document.getElementById('receipt-total');
 const qrContainer = document.getElementById('receipt-qr-container');
 const paymentInfo = document.getElementById('receipt-payment-info');
-
 // Datos de gasto
 const expenseRef = `G-${expenseId.substring(0, 8)}`;
 receiptFactura.textContent = expenseRef;
 receiptTotal.textContent = `$${expense.monto.toLocaleString('es-CO')}`;
-
 const tipoLabels = { purina: 'Purina', medicamento: 'Medicamento', transporte: 'Transporte', mantenimiento: 'Mant.', otros: 'Otros' };
 let detailsHTML = `
 <div class="receipt-detail"><span>Tipo:</span><span>${tipoLabels[expense.tipo] || expense.tipo}</span></div>
@@ -1347,23 +1331,20 @@ let detailsHTML = `
 <div class="receipt-detail"><span>Fecha:</span><span>${this.formatDateTime(expense.fechaCompleta)}</span></div>
 `;
 receiptDetails.innerHTML = detailsHTML;
-
 // Ocultar mensaje de pago
 paymentInfo.style.display = 'none';
-
 // Cambiar título
 document.querySelector('.receipt-title').textContent = 'RECIBO DE GASTO';
-
 // Generar QR básico
-const qrText = `${expenseRef}\n$${expense.monto.toLocaleString('es-CO')}\n${this.formatDateTime(expense.fechaCompleta)}`;
+const qrText = `${expenseRef}
+$${expense.monto.toLocaleString('es-CO')}
+${this.formatDateTime(expense.fechaCompleta)}`;
 const qrUrl = generateQR(qrText, 80);
-
-// Alinear QR CENTRADO (al final)
+// Alinear QR CENTRADO
 qrContainer.innerHTML = `<div style="text-align:center;"><img src="${qrUrl}" alt="QR" style="width:80px;height:80px;"></div>`;
-
 // Mostrar y generar PDF
 receiptTemplate.style.display = 'block';
-html2canvas(receiptTemplate).then(canvas => {
+html2canvas(receiptTemplate, { scale: 1 }).then(canvas => {
 const pdf = new jsPDF('p', 'mm', 'a4');
 const imgData = canvas.toDataURL('image/png');
 const imgWidth = 210;
