@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#4CAF50">
+<title>Control Interno | El Portachuelo</title>
+<link rel="icon" href="img/logo.png">
+<style>
+:root {
+  --primary: #4CAF50;
+  --secondary: #388E3C;
+  --light-green: #81C784;
+  --dark-green: #2E7D32;
+  --expense-color: #FF9800;
+  --white: #FFFFFF;
+  --gray: #616161;
+  --light-bg: #e8f5e9;
+  --medium-bg: #c8e6c9;
+  --dark-bg: #a5d6a7;
+  --share-bg: #f8f9fa;
+  --share-border: #e9ecef;
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+body {
+  background: linear-gradient(135deg, var(--light-bg) 0%, var(--medium-bg) 50%, var(--dark-bg) 100%);
+  min-height: 100vh;
+  padding: 12px;
+  color: #333;
+  transition: all 0.3s ease;
+}
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+/* Authentication Screen */
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  position: relative;
+  z-index: 10;
+}
+.auth-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  padding: 32px;
+  width: 94%;
+  max-width: 450px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+  position: relative;
+  overflow: hidden;
+  animation: slideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.auth-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary), var(--secondary), var(--primary));
+}
+.logo-container {
+  text-align: center;
+  margin-bottom: 24px;
+}
+.logo {
+  width: 100px;
+  height: 100px;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%234CAF50" opacity="0.2"/><path d="M30,40 Q40,30 50,40 T70,40" stroke="%232E7D32" stroke-width="3" fill="none"/><circle cx="40" cy="45" r="3" fill="%232E7D32"/><circle cx="60" cy="45" r="3" fill="%232E7D32"/><path d="M45,60 Q50,65 55,60" stroke="%232E7D32" stroke-width="2" fill="none"/></svg>');
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 50%;
+  margin: 0 auto 16px;
+}
+.auth-title {
+  font-size: 1.8rem;
+  color: var(--dark-green);
+  margin-bottom: 8px;
+  font-weight: 700;
+  text-align: center;
+}
+.auth-subtitle {
+  color: var(--gray);
+  margin-bottom: 24px;
+  font-size: 1rem;
+  text-align: center;
+}
+.form-group {
+  margin-bottom: 20px;
+}
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--dark-green);
+  font-size: 0.95rem;
+}
+input {
+  width: 100%;
+  padding: 14px;
+  border: 1.5px solid var(--light-green);
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background-color: white;
+}
+input:focus {
+  outline: none;
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 3px rgba(56, 142, 60, 0.2);
+}
+.btn {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  box-shadow: 0 3px 6px rgba(76, 175, 80, 0.3);
+  touch-action: manipulation;
+}
+.btn:hover {
+  background: var(--secondary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(56, 142, 60, 0.4);
+}
+.captcha-container {
+  background: var(--light-bg);
+  padding: 16px;
+  border-radius: 10px;
+  margin: 20px 0;
+  text-align: center;
+}
+.captcha-text {
+  font-size: 1.8rem;
+  font-weight: bold;
+  letter-spacing: 5px;
+  margin: 10px 0;
+  color: var(--dark-green);
+  font-family: monospace;
+}
+.captcha-input {
+  width: 100%;
+  padding: 12px;
+  text-align: center;
+  font-size: 1.2rem;
+  margin-top: 10px;
+}
+/* Main Dashboard */
+.dashboard {
+  display: none;
+  padding: 20px 0;
+}
+header {
+  text-align: center;
+  margin-bottom: 24px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 14px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+  position: relative;
+  overflow: hidden;
+}
+.nav-menu {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+.nav-btn {
+  padding: 10px 20px;
+  background: var(--light-green);
+  color: var(--dark-green);
+  border: none;
+  border-radius: 30px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.nav-btn.active, .nav-btn:hover {
+  background: var(--primary);
+  color: white;
+  transform: translateY(-2px);
+}
+.content-section {
+  display: none;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+  margin-bottom: 24px;
+}
+.content-section.active {
+  display: block;
+  animation: fadeIn 0.5s ease;
+}
+.section-title {
+  font-size: 1.6rem;
+  color: var(--dark-green);
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--light-green);
+}
+/* Tables */
+.table-container {
+  overflow-x: auto;
+  border-radius: 10px;
+  margin: 16px 0;
+}
+.sales-table, .expenses-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+}
+.sales-table th, .expenses-table th {
+  background: var(--light-green);
+  color: var(--dark-green);
+  text-align: left;
+  padding: 12px 14px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+.expenses-table th {
+  background: #FFB74D;
+  color: #E65100;
+}
+.sales-table td, .expenses-table td {
+  padding: 12px 14px;
+  font-size: 0.9rem;
+  border-bottom: 1px solid var(--light-green);
+}
+.expenses-table td {
+  border-bottom: 1px solid #FFE0B2;
+}
+.actions {
+  display: flex;
+  gap: 6px;
+}
+.action-btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  border: none;
+  font-weight: 600;
+}
+.download-btn {
+  background: #2196F3;
+  color: white;
+}
+/* Footer */
+.footer {
+  text-align: center;
+  margin-top: 20px;
+  padding: 16px;
+  color: var(--gray);
+  font-size: 0.85rem;
+  border-top: 1px solid rgba(0,0,0,0.05);
+}
+/* Receipt Template */
+.receipt-template {
+  display: none;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  background: white;
+  padding: 30px;
+  font-family: 'Arial', sans-serif;
+  box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+.receipt-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.receipt-logo {
+  width: 80px;
+  height: 80px;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%234CAF50" opacity="0.2"/><path d="M30,40 Q40,30 50,40 T70,40" stroke="%232E7D32" stroke-width="3" fill="none"/><circle cx="40" cy="45" r="3" fill="%232E7D32"/><circle cx="60" cy="45" r="3" fill="%232E7D32"/><path d="M45,60 Q50,65 55,60" stroke="%232E7D32" stroke-width="2" fill="none"/></svg>');
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  margin: 0 auto 10px;
+}
+.receipt-title {
+  font-size: 22px;
+  color: var(--dark-green);
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+.receipt-subtitle {
+  color: var(--gray);
+  font-size: 16px;
+  margin-bottom: 15px;
+}
+.receipt-factura {
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--primary);
+  margin-bottom: 15px;
+}
+.receipt-details {
+  margin: 20px 0;
+}
+.receipt-detail {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.receipt-total {
+  text-align: right;
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: 15px;
+  color: var(--primary);
+}
+.receipt-footer {
+  margin-top: 25px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--gray);
+}
+/* Share Modal */
+.share-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+.share-modal.active {
+  opacity: 1;
+  visibility: visible;
+}
+.share-content {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  transform: translateY(20px);
+  transition: transform 0.3s ease;
+}
+.share-modal.active .share-content {
+  transform: translateY(0);
+}
+.share-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--dark-green);
+  margin-bottom: 20px;
+}
+.share-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 20px 0;
+}
+.share-option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 10px;
+  background: var(--share-bg);
+  border: 1px solid var(--share-border);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 600;
+}
+.share-option:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.share-option.whatsapp {
+  color: #25D366;
+}
+.share-option.email {
+  color: #D44638;
+}
+.close-share {
+  background: var(--gray);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 16px;
+}
+.close-share:hover {
+  background: #424242;
+}
+/* Animations */
+@keyframes slideIn {
+  from { transform: translateY(-20px) scale(0.95); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+.notification {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 24px;
+  border-radius: 10px;
+  color: white;
+  font-weight: 600;
+  z-index: 10000;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  animation: fadeIn 0.3s, fadeOut 0.3s 2.7s forwards;
+}
+@keyframes fadeOut {
+  to { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+}
+.error { background: #f44336; }
+.success { background: #4CAF50; }
+</style>
+</head>
+<body>
+<!-- Authentication Screen -->
+<div class="auth-container" id="auth-screen">
+  <div class="auth-card">
+    <div class="logo-container">
+      <div class="logo"></div>
+      <h2 class="auth-title">Control Interno</h2>
+      <p class="auth-subtitle">El Portachuelo - Sistema de Gestión</p>
+    </div>
+    
+    <div class="form-group">
+      <label for="password">Contraseña de Acceso</label>
+      <input type="password" id="password" placeholder="Ingrese su contraseña">
+    </div>
+    
+    <div class="captcha-container">
+      <p>Verificación de seguridad</p>
+      <div class="captcha-text" id="captcha-text">AB3X9</div>
+      <input type="text" id="captcha-input" class="captcha-input" placeholder="Ingrese los caracteres mostrados">
+    </div>
+    
+    <button class="btn" id="login-btn">Acceder al Sistema</button>
+  </div>
+</div>
+
+<!-- Main Dashboard -->
+<div class="container" id="dashboard" style="display: none;">
+  <header>
+    <div class="logo-container">
+      <div class="logo"></div>
+      <h1>Control Interno</h1>
+      <p class="subtitle">El Portachuelo - Suaita Santander</p>
+    </div>
+    
+    <div class="nav-menu">
+      <button class="nav-btn active" data-section="sales">Ventas</button>
+      <button class="nav-btn" data-section="expenses">Gastos</button>
+      <button class="nav-btn" data-section="summary">Resumen</button>
+    </div>
+  </header>
+  
+  <!-- Sales Section -->
+  <div class="content-section active" id="sales-section">
+    <h2 class="section-title">📋 Registro de Ventas</h2>
+    <div class="table-container">
+      <table class="sales-table">
+        <thead>
+          <tr>
+            <th>Factura</th>
+            <th>Cliente</th>
+            <th>Cubetas</th>
+            <th>Precio</th>
+            <th>Total</th>
+            <th>Debe</th>
+            <th>Fecha y Hora</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="ventas-lista">
+          <tr><td colspan="8" style="text-align:center;padding:24px;color:var(--gray)">Cargando datos...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <!-- Expenses Section -->
+  <div class="content-section" id="expenses-section">
+    <h2 class="section-title">🧾 Registro de Gastos</h2>
+    <div class="table-container">
+      <table class="expenses-table">
+        <thead>
+          <tr>
+            <th>Tipo</th>
+            <th>Descripción</th>
+            <th>Monto</th>
+            <th>Fecha y Hora</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="gastos-lista">
+          <tr><td colspan="5" style="text-align:center;padding:24px;color:var(--gray)">Cargando datos...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <!-- Summary Section -->
+  <div class="content-section" id="summary-section">
+    <h2 class="section-title">📊 Resumen Financiero</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+      <div class="results" style="background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border-radius: 14px; padding: 18px;">
+        <div class="result-item">
+          <span class="result-label">Total Ventas</span>
+          <span class="result-value" id="total-ventas">0</span>
+        </div>
+        <div class="result-item">
+          <span class="result-label">Ingresos ($)</span>
+          <span class="result-value total" id="total-ingresos">0</span>
+        </div>
+        <div class="result-item">
+          <span class="result-label">Créditos</span>
+          <span class="result-value" id="total-debe" style="color: #FFD700;">0</span>
+        </div>
+      </div>
+      
+      <div class="expense-summary" style="background: linear-gradient(135deg, #FF9800, #E65100); color: white; border-radius: 14px; padding: 18px;">
+        <div class="result-item">
+          <span class="result-label">Total Gastos</span>
+          <span class="result-value" id="total-gastos-count">0</span>
+        </div>
+        <div class="result-item">
+          <span class="result-label">Total Gastos ($)</span>
+          <span class="result-value total" id="total-gastos">0</span>
+        </div>
+        <div class="result-item">
+          <span class="result-label">Balance Neto ($)</span>
+          <span class="result-value total neto-positivo" id="balance-neto">0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="footer">
+    <p>Control Interno &copy; 2025 | El Portachuelo</p>
+    <p style="margin-top:4px;font-size:0.8rem">Suaita Santander • Sistema Integral</p>
+  </div>
+</div>
+
+<!-- Recibo Individual Template -->
+<div id="receipt-template" class="receipt-template">
+  <div class="receipt-header">
+    <div class="receipt-logo"></div>
+    <h2 class="receipt-title">RECIBO DE VENTA</h2>
+    <p class="receipt-subtitle">El Portachuelo - Suaita - Santander</p>
+    <div class="receipt-factura" id="receipt-factura">F-0001</div>
+  </div>
+  <div class="receipt-details" id="receipt-details">
+    <!-- Detalles dinámicos -->
+  </div>
+  <div class="receipt-total" id="receipt-total">$0</div>
+  <!-- Contenedor del QR -->
+  <div id="receipt-qr-container" style="margin:12px 0; text-align: center;"></div>
+  <!-- Mensaje legal -->
+  <div style="margin-top:12px;font-size:9px;color:#666;text-align:center;line-height:1.3;">
+    Este recibo es un comprobante de control interno y no constituye<br>
+    una factura de venta ni documento equivalente según el Estatuto Tributario.
+  </div>
+  <div class="receipt-footer" style="margin-top:12px;">
+    <div style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 10px; text-align: center;">
+      <p style="font-size: 10px; color: #999; font-style: italic;">
+        Comprobante generado a partir de los registros de gestión.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Share Modal -->
+<div class="share-modal" id="share-modal">
+  <div class="share-content">
+    <h3 class="share-title">Compartir Recibo</h3>
+    <p>¿Cómo deseas compartir este recibo?</p>
+    <div class="share-options">
+      <div class="share-option whatsapp" id="share-whatsapp">
+        <span>📱 WhatsApp</span>
+      </div>
+      <div class="share-option email" id="share-email">
+        <span>✉️ Correo Electrónico</span>
+      </div>
+    </div>
+    <button class="close-share" id="close-share">Cerrar</button>
+  </div>
+</div>
+
+<script>
+// Mock data for demonstration (in real app, this would connect to your main database)
+const mockData = {
+  ventas: [
+    { id: 'v1', factura: "F-0001", cliente: "Carnes Don Juan", cubetas: 10, precio: 5000, total: 50000, debe: 0, fechaCompleta: "2025-12-28T09:30:00" },
+    { id: 'v2', factura: "F-0002", cliente: "Restaurante El Sabor", cubetas: 5, precio: 5200, total: 26000, debe: 10000, fechaCompleta: "2025-12-29T14:15:00" },
+    { id: 'v3', factura: "F-0003", cliente: "Tienda La Esquina", cubetas: 8, precio: 5100, total: 40800, debe: 0, fechaCompleta: "2026-01-02T11:20:00" }
+  ],
+  gastos: [
+    { id: 'g1', tipo: "purina", descripcion: "Bulto 40kg", monto: 85000, fechaCompleta: "2025-12-27T11:20:00" },
+    { id: 'g2', tipo: "medicamento", descripcion: "Vitamina AD3E", monto: 32000, fechaCompleta: "2025-12-28T16:45:00" },
+    { id: 'g3', tipo: "transporte", descripcion: "Combustible para entrega", monto: 45000, fechaCompleta: "2026-01-03T09:10:00" }
+  ]
+};
+
+// DOM Elements
+const authScreen = document.getElementById('auth-screen');
+const dashboard = document.getElementById('dashboard');
+const passwordInput = document.getElementById('password');
+const captchaInput = document.getElementById('captcha-input');
+const loginBtn = document.getElementById('login-btn');
+const captchaText = document.getElementById('captcha-text');
+const navButtons = document.querySelectorAll('.nav-btn');
+const contentSections = document.querySelectorAll('.content-section');
+
+// Generate random CAPTCHA
+function generateCaptcha() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let captcha = '';
+  for (let i = 0; i < 5; i++) {
+    captcha += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  captchaText.textContent = captcha;
+}
+
+// Initialize CAPTCHA
+generateCaptcha();
+
+// Navigation
+navButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const section = btn.dataset.section;
+    
+    // Update active button
+    navButtons.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    
+    // Show active section
+    contentSections.forEach(s => s.classList.remove('active'));
+    document.getElementById(`${section}-section`).classList.add('active');
+  });
+});
+
+// Authentication
+loginBtn.addEventListener('click', () => {
+  const password = passwordInput.value.trim();
+  const captcha = captchaInput.value.trim();
+  
+  // Validate inputs
+  if (!password) {
+    showNotification('Por favor ingrese la contraseña', 'error');
+    return;
+  }
+  
+  if (!captcha || captcha !== captchaText.textContent) {
+    showNotification('Verificación de seguridad incorrecta', 'error');
+    generateCaptcha();
+    captchaInput.value = '';
+    return;
+  }
+  
+  // In a real app, this would validate against a server
+  // For demo, we'll use a fixed password
+  if (password === 'control2025') {
+    authScreen.style.display = 'none';
+    dashboard.style.display = 'block';
+    loadDashboardData();
+    showNotification('¡Bienvenido al Control Interno!', 'success');
+  } else {
+    showNotification('Contraseña incorrecta', 'error');
+    passwordInput.value = '';
+  }
+});
+
+// Load dashboard data
+function loadDashboardData() {
+  renderSales();
+  renderExpenses();
+  updateSummary();
+}
+
+// Render sales table
+function renderSales() {
+  const tbody = document.getElementById('ventas-lista');
+  if (mockData.ventas.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--gray)">Sin ventas registradas</td></tr>`;
+    return;
+  }
+  
+  tbody.innerHTML = mockData.ventas.map(v => `
+    <tr>
+      <td>${v.factura}</td>
+      <td>${v.cliente}</td>
+      <td>${v.cubetas}</td>
+      <td>$${v.precio.toLocaleString('es-CO')}</td>
+      <td>$${v.total.toLocaleString('es-CO')}</td>
+      <td style="color:${v.debe > 0 ? '#FF9800' : '#4CAF50'}">$${v.debe.toLocaleString('es-CO')}</td>
+      <td>${formatDateTime(v.fechaCompleta)}</td>
+      <td class="actions">
+        <button class="action-btn download-btn" onclick="downloadReceipt('${v.id}')">📥 Recibo</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+// Render expenses table
+function renderExpenses() {
+  const tbody = document.getElementById('gastos-lista');
+  if (mockData.gastos.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--gray)">Sin gastos registrados</td></tr>`;
+    return;
+  }
+  
+  const tipoLabels = { purina: 'Purina', medicamento: 'Medicamento', transporte: 'Transporte', mantenimiento: 'Mant.', otros: 'Otros' };
+  
+  tbody.innerHTML = mockData.gastos.map(g => `
+    <tr>
+      <td>${tipoLabels[g.tipo] || g.tipo}</td>
+      <td>${g.descripcion || '-'}</td>
+      <td style="color:#E65100;font-weight:bold">$${g.monto.toLocaleString('es-CO')}</td>
+      <td>${formatDateTime(g.fechaCompleta)}</td>
+      <td class="actions">
+        <button class="action-btn download-btn" onclick="downloadExpenseReceipt('${g.id}')">📥 Recibo</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+// Update financial summary
+function updateSummary() {
+  const ingr = mockData.ventas.reduce((s, v) => s + v.total, 0);
+  const gast = mockData.gastos.reduce((s, g) => s + g.monto, 0);
+  const debe = mockData.ventas.reduce((s, v) => s + v.debe, 0);
+  const neto = ingr - gast;
+  
+  document.getElementById('total-ventas').textContent = mockData.ventas.length;
+  document.getElementById('total-ingresos').textContent = ingr.toLocaleString('es-CO');
+  document.getElementById('total-debe').textContent = debe.toLocaleString('es-CO');
+  document.getElementById('total-gastos-count').textContent = mockData.gastos.length;
+  document.getElementById('total-gastos').textContent = gast.toLocaleString('es-CO');
+  document.getElementById('balance-neto').textContent = neto.toLocaleString('es-CO');
+  document.getElementById('balance-neto').className = `result-value total ${neto >= 0 ? 'neto-positivo' : 'neto-negativo'}`;
+}
+
+// Format date and time
+function formatDateTime(dateStr) {
+  const d = new Date(dateStr);
+  return d.toLocaleString('es-CO', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  }).replace(',', '');
+}
+
+// Generate QR code
+function generateQR(text, size = 100) {
+  const encoded = encodeURIComponent(text);
+  return `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encoded}`;
+}
+
+// Download receipt for sale
+function downloadReceipt(saleId) {
+  const sale = mockData.ventas.find(v => v.id === saleId);
+  if (!sale) return;
+  
+  // Fill receipt template
+  document.getElementById('receipt-factura').textContent = sale.factura;
+  document.getElementById('receipt-total').textContent = `$${sale.total.toLocaleString('es-CO')}`;
+  
+  let detailsHTML = `
+    <div class="receipt-detail"><span>Cliente:</span><span>${sale.cliente}</span></div>
+    <div class="receipt-detail"><span>Cubetas:</span><span>${sale.cubetas}</span></div>
+    <div class="receipt-detail"><span>Precio unitario:</span><span>$${sale.precio.toLocaleString('es-CO')}</span></div>
+  `;
+  if (sale.debe && sale.debe > 0) {
+    detailsHTML += `<div class="receipt-detail"><span>Crédito:</span><span>$${sale.debe.toLocaleString('es-CO')}</span></div>`;
+  }
+  detailsHTML += `<div class="receipt-detail"><span>Fecha:</span><span>${formatDateTime(sale.fechaCompleta)}</span></div>`;
+  
+  document.getElementById('receipt-details').innerHTML = detailsHTML;
+  
+  // Generate QR
+  const qrText = `${sale.factura}\n${sale.cliente}\n$${sale.total.toLocaleString('es-CO')}\n${formatDateTime(sale.fechaCompleta)}`;
+  const qrUrl = generateQR(qrText, 100);
+  document.getElementById('receipt-qr-container').innerHTML = `<img src="${qrUrl}" alt="QR" style="width:100px;height:100px;">`;
+  
+  // Show receipt and simulate PDF generation
+  document.getElementById('receipt-template').style.display = 'block';
+  
+  // Simulate PDF generation delay
+  setTimeout(() => {
+    document.getElementById('receipt-template').style.display = 'none';
+    showShareModal();
+  }, 1000);
+}
+
+// Download receipt for expense
+function downloadExpenseReceipt(expenseId) {
+  const expense = mockData.gastos.find(g => g.id === expenseId);
+  if (!expense) return;
+  
+  // Fill receipt template
+  const expenseRef = `G-${expense.id.substring(0, 8)}`;
+  document.getElementById('receipt-factura').textContent = expenseRef;
+  document.getElementById('receipt-total').textContent = `$${expense.monto.toLocaleString('es-CO')}`;
+  
+  const tipoLabels = { purina: 'Purina', medicamento: 'Medicamento', transporte: 'Transporte', mantenimiento: 'Mant.', otros: 'Otros' };
+  let detailsHTML = `
+    <div class="receipt-detail"><span>Tipo:</span><span>${tipoLabels[expense.tipo] || expense.tipo}</span></div>
+    <div class="receipt-detail"><span>Descripción:</span><span>${expense.descripcion || '-'}</span></div>
+    <div class="receipt-detail"><span>Monto:</span><span>$${expense.monto.toLocaleString('es-CO')}</span></div>
+    <div class="receipt-detail"><span>Fecha:</span><span>${formatDateTime(expense.fechaCompleta)}</span></div>
+  `;
+  
+  document.getElementById('receipt-details').innerHTML = detailsHTML;
+  
+  // Change title for expense
+  document.querySelector('.receipt-title').textContent = 'RECIBO DE GASTO';
+  
+  // Generate QR
+  const qrText = `${expenseRef}\n$${expense.monto.toLocaleString('es-CO')}\n${formatDateTime(expense.fechaCompleta)}`;
+  const qrUrl = generateQR(qrText, 100);
+  document.getElementById('receipt-qr-container').innerHTML = `<img src="${qrUrl}" alt="QR" style="width:100px;height:100px;">`;
+  
+  // Show receipt and simulate PDF generation
+  document.getElementById('receipt-template').style.display = 'block';
+  
+  // Simulate PDF generation delay
+  setTimeout(() => {
+    document.getElementById('receipt-template').style.display = 'none';
+    // Restore title
+    document.querySelector('.receipt-title').textContent = 'RECIBO DE VENTA';
+    showShareModal();
+  }, 1000);
+}
+
+// Show share modal
+function showShareModal() {
+  document.getElementById('share-modal').classList.add('active');
+}
+
+// Close share modal
+document.getElementById('close-share').addEventListener('click', () => {
+  document.getElementById('share-modal').classList.remove('active');
+});
+
+// Share via WhatsApp
+document.getElementById('share-whatsapp').addEventListener('click', () => {
+  // In a real app, this would share the actual PDF
+  // For demo, we'll just show a notification
+  showNotification('Recibo compartido por WhatsApp', 'success');
+  document.getElementById('share-modal').classList.remove('active');
+});
+
+// Share via Email
+document.getElementById('share-email').addEventListener('click', () => {
+  // In a real app, this would open email client with attachment
+  // For demo, we'll just show a notification
+  showNotification('Recibo enviado por correo electrónico', 'success');
+  document.getElementById('share-modal').classList.remove('active');
+});
+
+// Show notification
+function showNotification(message, type) {
+  const notification = document.createElement('div');
+  notification.className = `notification ${type}`;
+  notification.textContent = message;
+  document.body.appendChild(notification);
+  
+  setTimeout(() => {
+    notification.remove();
+  }, 3000);
+}
+
+// Handle Enter key in password field
+passwordInput.addEventListener('keyup', (e) => {
+  if (e.key === 'Enter') {
+    loginBtn.click();
+  }
+});
+
+// Handle Enter key in CAPTCHA field
+captchaInput.addEventListener('keyup', (e) => {
+  if (e.key === 'Enter') {
+    loginBtn.click();
+  }
+});
+</script>
+</body>
+</html>
+
