@@ -23,6 +23,8 @@
 --light-bg: #e8f5e9;
 --medium-bg: #c8e6c9;
 --dark-bg: #a5d6a7;
+--share-bg: #f8f9fa;
+--share-border: #e9ecef;
 }
 * {
 margin: 0;
@@ -616,6 +618,107 @@ box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 .online { background: #4CAF50; }
 .offline { background: #F44336; }
 .syncing { background: #2196F3; animation: pulse 1.5s infinite; }
+
+/* Share Modal */
+.share-modal {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: rgba(0,0,0,0.7);
+display: flex;
+justify-content: center;
+align-items: center;
+z-index: 10000;
+opacity: 0;
+visibility: hidden;
+transition: all 0.3s ease;
+}
+.share-modal.active {
+opacity: 1;
+visibility: visible;
+}
+.share-content {
+background: white;
+border-radius: 16px;
+padding: 24px;
+width: 90%;
+max-width: 400px;
+text-align: center;
+box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+transform: translateY(20px);
+transition: transform 0.3s ease;
+}
+.share-modal.active .share-content {
+transform: translateY(0);
+}
+.share-title {
+font-size: 1.4rem;
+font-weight: 700;
+color: var(--dark-green);
+margin-bottom: 20px;
+}
+.share-options {
+display: flex;
+flex-direction: column;
+gap: 12px;
+margin: 20px 0;
+}
+.share-option {
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 12px;
+padding: 14px;
+border-radius: 10px;
+background: var(--share-bg);
+border: 1px solid var(--share-border);
+cursor: pointer;
+transition: all 0.2s ease;
+font-weight: 600;
+}
+.share-option:hover {
+transform: translateY(-2px);
+box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.share-option.whatsapp {
+color: #25D366;
+}
+.share-option.email {
+color: #D44638;
+}
+.share-option i {
+font-size: 1.4rem;
+}
+.close-share {
+background: var(--gray);
+color: white;
+padding: 10px 20px;
+border-radius: 8px;
+border: none;
+font-weight: 600;
+cursor: pointer;
+transition: all 0.2s ease;
+}
+.close-share:hover {
+background: #424242;
+}
+
+/* Icons */
+.icon {
+display: inline-block;
+width: 24px;
+height: 24px;
+background-size: contain;
+background-repeat: no-repeat;
+}
+.whatsapp-icon {
+background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%2325D366' d='M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.506-.173-.006-.371-.006-.57-.006-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z'/%3E%3C/svg%3E");
+}
+.email-icon {
+background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23D44638' d='M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z'/%3E%3C/svg%3E");
+}
 </style>
 </head>
 <body>
@@ -664,7 +767,7 @@ box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 </div>
 <div class="form-group">
 <label for="factura">N° Factura</label>
-<input type="text" id="factura" placeholder="F-0001" readonly>
+<input type="text" id="factura" placeholder="F-0001">
 </div>
 <div class="form-group">
 <label for="cubetas">Cubetas</label>
@@ -879,6 +982,26 @@ Comprobante generado a partir de los registros de gestión.
 </div>
 </div>
 </div>
+
+<!-- Share Modal -->
+<div class="share-modal" id="share-modal">
+  <div class="share-content">
+    <h3 class="share-title">Compartir Recibo</h3>
+    <p>¿Cómo deseas compartir este recibo?</p>
+    <div class="share-options">
+      <div class="share-option whatsapp" id="share-whatsapp">
+        <span class="icon whatsapp-icon"></span>
+        <span>WhatsApp</span>
+      </div>
+      <div class="share-option email" id="share-email">
+        <span class="icon email-icon"></span>
+        <span>Correo Electrónico</span>
+      </div>
+    </div>
+    <button class="close-share" id="close-share">Cerrar</button>
+  </div>
+</div>
+
 <!-- IndexedDB Helper -->
 <script>
 // IndexedDB Manager (sin dependencia externa)
@@ -1012,6 +1135,7 @@ this.gastos = [];
 this.currentEditSale = undefined;
 this.currentEditExpense = undefined;
 this.nextFacturaNumber = 1;
+this.lastGeneratedReceipt = null;
 this.init();
 }
 init() {
@@ -1061,7 +1185,8 @@ console.error('Error cargando datos:', e);
 }
 }
 addSale(data) {
-const factura = `F-${String(this.nextFacturaNumber).padStart(4, '0')}`;
+// Use the provided invoice number or generate a new one
+let factura = data.factura || `F-${String(this.nextFacturaNumber).padStart(4, '0')}`;
 db.saveVenta({
 id: Date.now() + '-' + Math.random().toString(36).substr(2, 5),
 cliente: data.cliente.trim(),
@@ -1072,8 +1197,11 @@ debe: data.debe || 0,
 fechaCompleta: data.fechaCompleta,
 factura: factura
 }).then(() => {
+// Only increment if we used the auto-generated number
+if (!data.factura) {
 this.nextFacturaNumber++;
 db.updateNextFacturaNumber(this.nextFacturaNumber);
+}
 this.loadData();
 this.updateFacturaInput();
 this.notify('Venta guardada ✔️');
@@ -1092,7 +1220,8 @@ cubetas: data.cubetas,
 precio: data.precio,
 total: data.total,
 debe: data.debe || 0,
-fechaCompleta: data.fechaCompleta
+fechaCompleta: data.fechaCompleta,
+factura: data.factura || v.factura // Preserve existing invoice if not provided
 }).then(() => {
 this.loadData();
 this.notify('Venta actualizada ✔️');
@@ -1228,6 +1357,7 @@ editSale(index) {
 if (index < 0 || index >= this.ventas.length) return;
 const v = this.ventas[index];
 document.getElementById('cliente').value = v.cliente;
+document.getElementById('factura').value = v.factura; // Make invoice editable
 document.getElementById('cubetas').value = v.cubetas;
 document.getElementById('precio').value = v.precio;
 document.getElementById('fecha-venta').value = new Date(v.fechaCompleta).toISOString().slice(0, 16);
@@ -1305,8 +1435,19 @@ pdf.addPage();
 pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
 heightLeft -= pageHeight;
 }
+// Store the generated PDF for sharing
+const pdfBlob = pdf.output('blob');
+this.lastGeneratedReceipt = {
+  blob: pdfBlob,
+  filename: `recibo-${sale.factura}.pdf`,
+  factura: sale.factura,
+  cliente: sale.cliente,
+  total: sale.total
+};
 pdf.save(`recibo-${sale.factura}.pdf`);
 receiptTemplate.style.display = 'none';
+// Show share modal
+this.showShareModal();
 });
 }
 // Descargar recibo individual - GASTO
@@ -1360,10 +1501,21 @@ pdf.addPage();
 pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
 heightLeft -= pageHeight;
 }
+// Store the generated PDF for sharing
+const pdfBlob = pdf.output('blob');
+this.lastGeneratedReceipt = {
+  blob: pdfBlob,
+  filename: `gasto-${expenseId.substring(0, 8)}.pdf`,
+  factura: expenseRef,
+  cliente: '',
+  total: expense.monto
+};
 pdf.save(`gasto-${expenseId.substring(0, 8)}.pdf`);
 receiptTemplate.style.display = 'none';
 // Restaurar título original
 document.querySelector('.receipt-title').textContent = 'RECIBO DE VENTA';
+// Show share modal
+this.showShareModal();
 });
 }
 // Generar reporte completo con paginación
@@ -1448,6 +1600,43 @@ this.notify('PDF generado exitosamente');
 });
 }
 }
+// Show share modal
+showShareModal() {
+const modal = document.getElementById('share-modal');
+modal.classList.add('active');
+}
+// Hide share modal
+hideShareModal() {
+const modal = document.getElementById('share-modal');
+modal.classList.remove('active');
+}
+// Share via WhatsApp
+shareViaWhatsApp() {
+if (!this.lastGeneratedReceipt) return;
+  
+// For mobile devices, we can use the native sharing API
+if (navigator.share) {
+  navigator.share({
+    title: 'Recibo de Venta',
+    text: `Recibo ${this.lastGeneratedReceipt.factura} - ${this.lastGeneratedReceipt.cliente}`,
+    files: [new File([this.lastGeneratedReceipt.blob], this.lastGeneratedReceipt.filename, { type: 'application/pdf' })]
+  }).catch(console.error);
+} else {
+  // Fallback for desktop
+  const message = `Hola, te envío el recibo ${this.lastGeneratedReceipt.factura} por un monto de $${this.lastGeneratedReceipt.total.toLocaleString('es-CO')}`;
+  const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
+  window.open(url, '_blank');
+}
+}
+// Share via Email
+shareViaEmail() {
+if (!this.lastGeneratedReceipt) return;
+  
+const subject = `Recibo de Venta - ${this.lastGeneratedReceipt.factura}`;
+const body = `Estimado cliente,\n\nAdjunto el recibo de su compra.\n\nTotal: $${this.lastGeneratedReceipt.total.toLocaleString('es-CO')}\n\nGracias por su preferencia.`;
+const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+window.open(mailtoLink, '_blank');
+}
 }
 // === INICIALIZACIÓN ===
 const businessManager = new BusinessManager();
@@ -1488,12 +1677,14 @@ pinInput.value += val;
 // === EVENTOS ===
 document.getElementById('agregar-venta')?.addEventListener('click', () => {
 const cliente = document.getElementById('cliente')?.value.trim();
+const factura = document.getElementById('factura')?.value.trim(); // Get invoice number
 const cub = parseInt(document.getElementById('cubetas')?.value) || 0;
 const prec = parseInt(document.getElementById('precio')?.value) || 0;
 const fecha = document.getElementById('fecha-venta')?.value;
 const cDebe = parseInt(document.getElementById('cubetas-debe')?.value) || 0;
 const mDebe = parseInt(document.getElementById('monto-debe')?.value) || 0;
 if (!cliente) return businessManager.notify('Cliente requerido', 'error');
+if (!factura) return businessManager.notify('Número de factura requerido', 'error');
 if (cub <= 0) return businessManager.notify('Cubetas > 0', 'error');
 if (prec <= 0) return businessManager.notify('Precio > 0', 'error');
 if (!fecha) return businessManager.notify('Fecha y hora requeridas', 'error');
@@ -1507,7 +1698,12 @@ if (cDebe > cub) return businessManager.notify('Cub. crédito ≤ vendidas', 'er
 debe = cDebe * prec;
 }
 const data = {
-cliente, cubetas: cub, precio: prec, total, debe,
+cliente, 
+factura, // Include invoice number
+cubetas: cub, 
+precio: prec, 
+total, 
+debe,
 fechaCompleta: new Date(fecha).toISOString()
 };
 if (businessManager.currentEditSale !== undefined) {
@@ -1518,6 +1714,8 @@ businessManager.addSale(data);
 }
 // Reset
 document.getElementById('cliente').value = '';
+document.getElementById('factura').value = ''; // Reset to auto-generated
+businessManager.updateFacturaInput(); // Set to next available
 document.getElementById('cubetas').value = '1';
 document.getElementById('precio').value = '5000';
 document.getElementById('cubetas-debe').value = '0';
@@ -1547,6 +1745,29 @@ document.getElementById('fecha-gasto').value = new Date().toISOString().slice(0,
 document.getElementById('generar-pdf')?.addEventListener('click', () => {
 businessManager.generateFullReport();
 });
+
+// Share modal events
+document.getElementById('close-share')?.addEventListener('click', () => {
+businessManager.hideShareModal();
+});
+
+document.getElementById('share-whatsapp')?.addEventListener('click', () => {
+businessManager.shareViaWhatsApp();
+businessManager.hideShareModal();
+});
+
+document.getElementById('share-email')?.addEventListener('click', () => {
+businessManager.shareViaEmail();
+businessManager.hideShareModal();
+});
+
+// Close modal when clicking outside
+document.getElementById('share-modal')?.addEventListener('click', (e) => {
+if (e.target === document.getElementById('share-modal')) {
+businessManager.hideShareModal();
+}
+});
+
 // === SINCRONIZACIÓN (simulada, sin API real) ===
 let isOnline = navigator.onLine;
 const badge = document.getElementById('connection-badge');
