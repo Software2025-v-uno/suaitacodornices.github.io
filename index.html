@@ -436,13 +436,13 @@ gap: 12px;
 grid-template-columns: 1fr 1fr;
 }
 }
-/* PDF Template (oculto) */
+/* PDF Template (oculto) - FONDO BLANCO FORZADO */
 .pdf-template {
 display: none;
 width: 100%;
 max-width: 800px;
 margin: 0 auto;
-background: white;
+background: white !important;
 padding: 40px;
 font-family: 'Arial', sans-serif;
 box-shadow: 0 0 20px rgba(0,0,0,0.1);
@@ -521,13 +521,13 @@ font-size: 22px;
 font-weight: bold;
 margin-top: 15px;
 }
-/* Recibo Individual */
+/* Recibo Individual - FONDO BLANCO FORZADO */
 .receipt-template {
 display: none;
 width: 100%;
 max-width: 600px;
 margin: 0 auto;
-background: white;
+background: white !important;
 padding: 30px;
 font-family: 'Arial', sans-serif;
 box-shadow: 0 0 20px rgba(0,0,0,0.1);
@@ -618,7 +618,6 @@ box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 .online { background: #4CAF50; }
 .offline { background: #F44336; }
 .syncing { background: #2196F3; animation: pulse 1.5s infinite; }
-
 /* Share Modal */
 .share-modal {
 position: fixed;
@@ -704,7 +703,6 @@ transition: all 0.2s ease;
 .close-share:hover {
 background: #424242;
 }
-
 /* Icons */
 .icon {
 display: inline-block;
@@ -982,26 +980,24 @@ Comprobante generado a partir de los registros de gestión.
 </div>
 </div>
 </div>
-
 <!-- Share Modal -->
 <div class="share-modal" id="share-modal">
-  <div class="share-content">
-    <h3 class="share-title">Compartir Recibo</h3>
-    <p>¿Cómo deseas compartir este recibo?</p>
-    <div class="share-options">
-      <div class="share-option whatsapp" id="share-whatsapp">
-        <span class="icon whatsapp-icon"></span>
-        <span>WhatsApp</span>
-      </div>
-      <div class="share-option email" id="share-email">
-        <span class="icon email-icon"></span>
-        <span>Correo Electrónico</span>
-      </div>
-    </div>
-    <button class="close-share" id="close-share">Cerrar</button>
-  </div>
+<div class="share-content">
+<h3 class="share-title">Compartir Recibo</h3>
+<p>¿Cómo deseas compartir este recibo?</p>
+<div class="share-options">
+<div class="share-option whatsapp" id="share-whatsapp">
+<span class="icon whatsapp-icon"></span>
+<span>WhatsApp</span>
 </div>
-
+<div class="share-option email" id="share-email">
+<span class="icon email-icon"></span>
+<span>Correo Electrónico</span>
+</div>
+</div>
+<button class="close-share" id="close-share">Cerrar</button>
+</div>
+</div>
 <!-- IndexedDB Helper -->
 <script>
 // IndexedDB Manager (sin dependencia externa)
@@ -1438,11 +1434,11 @@ heightLeft -= pageHeight;
 // Store the generated PDF for sharing
 const pdfBlob = pdf.output('blob');
 this.lastGeneratedReceipt = {
-  blob: pdfBlob,
-  filename: `recibo-${sale.factura}.pdf`,
-  factura: sale.factura,
-  cliente: sale.cliente,
-  total: sale.total
+blob: pdfBlob,
+filename: `recibo-${sale.factura}.pdf`,
+factura: sale.factura,
+cliente: sale.cliente,
+total: sale.total
 };
 pdf.save(`recibo-${sale.factura}.pdf`);
 receiptTemplate.style.display = 'none';
@@ -1504,11 +1500,11 @@ heightLeft -= pageHeight;
 // Store the generated PDF for sharing
 const pdfBlob = pdf.output('blob');
 this.lastGeneratedReceipt = {
-  blob: pdfBlob,
-  filename: `gasto-${expenseId.substring(0, 8)}.pdf`,
-  factura: expenseRef,
-  cliente: '',
-  total: expense.monto
+blob: pdfBlob,
+filename: `gasto-${expenseId.substring(0, 8)}.pdf`,
+factura: expenseRef,
+cliente: '',
+total: expense.monto
 };
 pdf.save(`gasto-${expenseId.substring(0, 8)}.pdf`);
 receiptTemplate.style.display = 'none';
@@ -1613,27 +1609,28 @@ modal.classList.remove('active');
 // Share via WhatsApp
 shareViaWhatsApp() {
 if (!this.lastGeneratedReceipt) return;
-  
 // For mobile devices, we can use the native sharing API
 if (navigator.share) {
-  navigator.share({
-    title: 'Recibo de Venta',
-    text: `Recibo ${this.lastGeneratedReceipt.factura} - ${this.lastGeneratedReceipt.cliente}`,
-    files: [new File([this.lastGeneratedReceipt.blob], this.lastGeneratedReceipt.filename, { type: 'application/pdf' })]
-  }).catch(console.error);
+navigator.share({
+title: 'Recibo de Venta',
+text: `Recibo ${this.lastGeneratedReceipt.factura} - ${this.lastGeneratedReceipt.cliente}`,
+files: [new File([this.lastGeneratedReceipt.blob], this.lastGeneratedReceipt.filename, { type: 'application/pdf' })]
+}).catch(console.error);
 } else {
-  // Fallback for desktop
-  const message = `Hola, te envío el recibo ${this.lastGeneratedReceipt.factura} por un monto de $${this.lastGeneratedReceipt.total.toLocaleString('es-CO')}`;
-  const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
-  window.open(url, '_blank');
+// Fallback for desktop
+const message = `Hola, te envío el recibo ${this.lastGeneratedReceipt.factura} por un monto de $${this.lastGeneratedReceipt.total.toLocaleString('es-CO')}`;
+const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
+window.open(url, '_blank');
 }
 }
 // Share via Email
 shareViaEmail() {
 if (!this.lastGeneratedReceipt) return;
-  
 const subject = `Recibo de Venta - ${this.lastGeneratedReceipt.factura}`;
-const body = `Estimado cliente,\n\nAdjunto el recibo de su compra.\n\nTotal: $${this.lastGeneratedReceipt.total.toLocaleString('es-CO')}\n\nGracias por su preferencia.`;
+const body = `Estimado cliente,
+Adjunto el recibo de su compra.
+Total: $${this.lastGeneratedReceipt.total.toLocaleString('es-CO')}
+Gracias por su preferencia.`;
 const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 window.open(mailtoLink, '_blank');
 }
@@ -1698,11 +1695,11 @@ if (cDebe > cub) return businessManager.notify('Cub. crédito ≤ vendidas', 'er
 debe = cDebe * prec;
 }
 const data = {
-cliente, 
+cliente,
 factura, // Include invoice number
-cubetas: cub, 
-precio: prec, 
-total, 
+cubetas: cub,
+precio: prec,
+total,
 debe,
 fechaCompleta: new Date(fecha).toISOString()
 };
@@ -1745,29 +1742,24 @@ document.getElementById('fecha-gasto').value = new Date().toISOString().slice(0,
 document.getElementById('generar-pdf')?.addEventListener('click', () => {
 businessManager.generateFullReport();
 });
-
 // Share modal events
 document.getElementById('close-share')?.addEventListener('click', () => {
 businessManager.hideShareModal();
 });
-
 document.getElementById('share-whatsapp')?.addEventListener('click', () => {
 businessManager.shareViaWhatsApp();
 businessManager.hideShareModal();
 });
-
 document.getElementById('share-email')?.addEventListener('click', () => {
 businessManager.shareViaEmail();
 businessManager.hideShareModal();
 });
-
 // Close modal when clicking outside
 document.getElementById('share-modal')?.addEventListener('click', (e) => {
 if (e.target === document.getElementById('share-modal')) {
 businessManager.hideShareModal();
 }
 });
-
 // === SINCRONIZACIÓN (simulada, sin API real) ===
 let isOnline = navigator.onLine;
 const badge = document.getElementById('connection-badge');
