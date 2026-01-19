@@ -177,31 +177,41 @@
     nav {
       background: white;
       border-radius: 14px;
-      padding: 16px;
+      padding: 20px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.08);
       margin-bottom: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
     }
-    select, input[type="text"], button {
-      width: 100%;
-      padding: 12px;
-      margin: 8px 0;
+    select, input[type="text"] {
+      width: 280px;
+      padding: 10px;
+      margin: 0;
       border: 1.5px solid var(--light-green);
-      border-radius: 10px;
-      font-size: 1rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
       background: white;
       transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
+    /* Botones compactos y uniformes */
     .btn-modern {
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-      border: none;
-      box-shadow: 0 3px 6px rgba(76, 175, 80, 0.3);
+      width: 280px !important;
+      padding: 10px 16px !important;
+      font-size: 0.95rem !important;
+      border-radius: 8px !important;
+      background: linear-gradient(135deg, var(--primary), var(--secondary)) !important;
+      color: white !important;
+      font-weight: 600 !important;
+      cursor: pointer !important;
+      border: none !important;
+      box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3) !important;
+      transition: all 0.2s ease !important;
     }
     .btn-modern:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 12px rgba(56, 142, 60, 0.4);
+      transform: translateY(-2px) !important;
+      box-shadow: 0 4px 8px rgba(56, 142, 60, 0.4) !important;
     }
     .results {
       background: white;
