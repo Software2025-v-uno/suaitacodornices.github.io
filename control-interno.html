@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#4CAF50" />
+  <title>Control Interno | El Portachuelo</title>
+  <link rel="icon" href="img/logo.png" />
+  <style>
+    :root {
+      --primary: #4CAF50;
+      --secondary: #388E3C;
+      --light-green: #81C784;
+      --dark-green: #2E7D32;
+      --white: #FFFFFF;
+      --gray: #616161;
+      --light-bg: #e8f5e9;
+      --medium-bg: #c8e6c9;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    body {
+      background: linear-gradient(135deg, var(--light-bg) 0%, var(--medium-bg) 100%);
+      min-height: 100vh;
+      padding: 12px;
+      color: #333;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 14px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+    }
+    .logo {
+      width: 80px;
+      height: 80px;
+      background: url('img/codorniz.jpg');
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+      border-radius: 50%;
+      margin: 0 auto 12px;
+    }
+    h1 {
+      color: var(--dark-green);
+      font-size: 1.8rem;
+      margin-bottom: 6px;
+    }
+    nav {
+      background: white;
+      border-radius: 12px;
+      padding: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      margin-bottom: 24px;
+    }
+    select, button {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border: 1.5px solid var(--light-green);
+      border-radius: 10px;
+      font-size: 1rem;
+      background: white;
+    }
+    button {
+      background: var(--primary);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    button:hover {
+      background: var(--secondary);
+    }
+    .results {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      margin-top: 16px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+    th {
+      background: var(--light-green);
+      color: var(--dark-green);
+    }
+    footer {
+      text-align: center;
+      margin-top: 24px;
+      padding: 12px;
+      color: var(--gray);
+      font-size: 0.85rem;
+    }
+    /* Recibo oculto para PDF */
+    #receipt-template {
+      display: none;
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      padding: 30px;
+      font-family: Arial, sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo"></div>
+      <h1>Control Interno</h1>
+      <p>El Portachuelo – Suaita, Santander</p>
+    </header>
+
+    <nav>
+      <button onclick="goToMain()">← Volver al Registro Principal</button>
+      <select id="mes-select">
+        <option value="">Seleccione un mes</option>
+        <option value="0">Enero</option>
+        <option value="1">Febrero</option>
+        <option value="2">Marzo</option>
+        <option value="3">Abril</option>
+        <option value="4">Mayo</option>
+        <option value="5">Junio</option>
+        <option value="6">Julio</option>
+        <option value="7">Agosto</option>
+        <option value="8">Septiembre</option>
+        <option value="9">Octubre</option>
+        <option value="10">Noviembre</option>
+        <option value="11">Diciembre</option>
+      </select>
+      <button onclick="descargarExtractoVentas()">📥 Extracto Mensual de Ventas</button>
+      <button onclick="descargarExtractoGastos()">💸 Extracto Mensual de Gastos</button>
+      <button onclick="clientesTop()">👑 Clientes que Más Compran</button>
+      <input type="text" id="cliente-input" placeholder="Nombre del cliente" style="margin-top:12px;" />
+      <button onclick="ventasPorCliente()">🔍 Ventas por Cliente</button>
+    </nav>
+
+    <div class="results" id="resultados">
+      <!-- Resultados dinámicos aquí -->
+    </div>
+
+    <footer>
+      <p>El Portachuelo &copy; 2026 | Sistema de Control Interno</p>
+    </footer>
+  </div>
+
+  <!-- Recibo para PDF -->
+  <div id="receipt-template">
+    <div style="text-align:center;">
+      <div style="width:80px;height:80px;background:url('img/codorniz.jpg');background-size:contain;background-position:center;margin:0 auto 10px;"></div>
+      <h2 style="color:#2E7D32;font-weight:bold;">RECIBO DE VENTA</h2>
+      <p style="color:#666;font-size:14px;">El Portachuelo – Suaita, Santander</p>
+      <p id="receipt-factura" style="font-size:18px;color:#4CAF50;font-weight:bold;"></p>
+    </div>
+    <div id="receipt-details" style="margin:20px 0;"></div>
+    <div id="receipt-qr" style="text-align:center;margin:15px 0;"></div>
+    <p style="text-align:center;font-size:10px;color:#888;margin-top:20px;border-top:1px solid #eee;padding-top:10px;">
+      Generado desde Control Interno
+    </p>
+  </div>
+
+  <!-- Librerías externas -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script>window.jsPDF = window.jspdf.jsPDF;</script>
+
+  <script>
+    // === IndexedDB Helper (reutilizado del sistema principal) ===
+    class DBManager {
+      constructor() {
+        this.db = null;
+      }
+      async init() {
+        if (this.db) return this.db;
+        return new Promise((resolve, reject) => {
+          const req = indexedDB.open('PortachueloDB', 2);
+          req.onerror = () => reject(req.error);
+          req.onsuccess = () => {
+            this.db = req.result;
+            resolve(this.db);
+          };
+          req.onupgradeneeded = () => {};
+        });
+      }
+      async getAllVentas() {
+        await this.init();
+        return new Promise((resolve, reject) => {
+          const tx = this.db.transaction(['ventas'], 'readonly');
+          const store = tx.objectStore('ventas');
+          const req = store.getAll();
+          req.onsuccess = () => resolve(req.result);
+          req.onerror = () => reject(req.error);
+        });
+      }
+      async getAllGastos() {
+        await this.init();
+        return new Promise((resolve, reject) => {
+          const tx = this.db.transaction(['gastos'], 'readonly');
+          const store = tx.objectStore('gastos');
+          const req = store.getAll();
+          req.onsuccess = () => resolve(req.result);
+          req.onerror = () => reject(req.error);
+        });
+      }
+    }
+
+    const db = new DBManager();
+
+    // === Funciones de utilidad ===
+    function formatDate(dateStr) {
+      const d = new Date(dateStr);
+      return d.toLocaleString('es-CO', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+
+    function generateQR(text) {
+      const encoded = encodeURIComponent(text);
+      return `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encoded}`;
+    }
+
+    function mostrarTabla(titulo, headers, filas) {
+      let html = `<h3>${titulo}</h3><table><thead><tr>`;
+      headers.forEach(h => html += `<th>${h}</th>`);
+      html += `</tr></thead><tbody>`;
+      filas.forEach(fila => {
+        html += `<tr>${fila.map(cell => `<td>${cell}</td>`).join('')}</tr>`;
+      });
+      html += `</tbody></table>`;
+      document.getElementById('resultados').innerHTML = html;
+    }
+
+    async function filtrarPorMes(arr, mesIndex) {
+      const now = new Date();
+      const año = now.getFullYear();
+      return arr.filter(item => {
+        const fecha = new Date(item.fechaCompleta);
+        return fecha.getMonth() === mesIndex && fecha.getFullYear() === año;
+      });
+    }
+
+    // === Acciones ===
+    async function descargarExtractoVentas() {
+      const mes = document.getElementById('mes-select').value;
+      if (mes === '') return alert('Seleccione un mes');
+      const ventas = await db.getAllVentas();
+      const filtradas = await filtrarPorMes(ventas, parseInt(mes));
+      if (filtradas.length === 0) return alert('No hay ventas este mes');
+      const headers = ['Factura', 'Cliente', 'Cubetas', 'Total', 'Fecha'];
+      const filas = filtradas.map(v => [
+        v.factura,
+        v.cliente,
+        v.cubetas,
+        `$${v.total.toLocaleString('es-CO')}`,
+        formatDate(v.fechaCompleta)
+      ]);
+      mostrarTabla(`Ventas – ${new Date(0, mes).toLocaleDateString('es-CO', { month: 'long' })}`, headers, filas);
+      generarPDF('extracto-ventas', headers, filas);
+    }
+
+    async function descargarExtractoGastos() {
+      const mes = document.getElementById('mes-select').value;
+      if (mes === '') return alert('Seleccione un mes');
+      const gastos = await db.getAllGastos();
+      const filtrados = await filtrarPorMes(gastos, parseInt(mes));
+      if (filtrados.length === 0) return alert('No hay gastos este mes');
+      const tipoLabels = { purina: 'Purina', medicamento: 'Medicamento', transporte: 'Transporte', mantenimiento: 'Mant.', otros: 'Otros' };
+      const headers = ['Tipo', 'Descripción', 'Monto', 'Fecha'];
+      const filas = filtrados.map(g => [
+        tipoLabels[g.tipo] || g.tipo,
+        g.descripcion || '-',
+        `$${g.monto.toLocaleString('es-CO')}`,
+        formatDate(g.fechaCompleta)
+      ]);
+      mostrarTabla(`Gastos – ${new Date(0, mes).toLocaleDateString('es-CO', { month: 'long' })}`, headers, filas);
+      generarPDF('extracto-gastos', headers, filas);
+    }
+
+    async function clientesTop() {
+      const ventas = await db.getAllVentas();
+      const mapa = {};
+      ventas.forEach(v => {
+        mapa[v.cliente] = (mapa[v.cliente] || 0) + v.total;
+      });
+      const top = Object.entries(mapa)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10);
+      const headers = ['Cliente', 'Total Comprado ($)'];
+      const filas = top.map(([cliente, total]) => [cliente, `$${total.toLocaleString('es-CO')}`]);
+      mostrarTabla('Top 10 Clientes', headers, filas);
+      generarPDF('top-clientes', headers, filas);
+    }
+
+    async function ventasPorCliente() {
+      const nombre = document.getElementById('cliente-input').value.trim();
+      if (!nombre) return alert('Ingrese nombre de cliente');
+      const ventas = await db.getAllVentas();
+      const delCliente = ventas.filter(v => v.cliente.toLowerCase().includes(nombre.toLowerCase()));
+      if (delCliente.length === 0) return alert('No se encontraron ventas para ese cliente');
+      const headers = ['Factura', 'Cubetas', 'Total', 'Crédito', 'Fecha'];
+      const filas = delCliente.map(v => [
+        v.factura,
+        v.cubetas,
+        `$${v.total.toLocaleString('es-CO')}`,
+        v.debe ? `$${v.debe.toLocaleString('es-CO')}` : '—',
+        formatDate(v.fechaCompleta)
+      ]);
+      mostrarTabla(`Ventas de: ${nombre}`, headers, filas);
+      generarPDF(`ventas-${nombre}`, headers, filas);
+    }
+
+    // === Generación de PDF con recibo individual ===
+    async function generarPDF(nombre, headers, filas) {
+      const template = document.getElementById('receipt-template');
+      const details = document.getElementById('receipt-details');
+      let html = `<table style="width:100%;border-collapse:collapse;font-size:12px;">`;
+      html += `<thead><tr style="background:#e8f5e9;">`;
+      headers.forEach(h => html += `<th style="padding:6px;border:1px solid #ddd;">${h}</th>`);
+      html += `</tr></thead><tbody>`;
+      filas.forEach(fila => {
+        html += `<tr>`;
+        fila.forEach(cell => html += `<td style="padding:6px;border:1px solid #ddd;">${cell}</td>`);
+        html += `</tr>`;
+      });
+      html += `</tbody></table>`;
+      details.innerHTML = html;
+      document.getElementById('receipt-factura').textContent = nombre.toUpperCase();
+      document.getElementById('receipt-qr').innerHTML = ''; // No QR en extractos generales
+
+      template.style.display = 'block';
+      const { jsPDF } = window.jspdf;
+      html2canvas(template).then(canvas => {
+        const imgData = canvas.toDataURL('img/logo.png');
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const imgWidth = 210;
+        const pageHeight = 297;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+        pdf.save(`${nombre}.pdf`);
+        template.style.display = 'none';
+      });
+    }
+
+    // === Enlace a página principal ===
+    function goToMain() {
+      window.location.href = 'index.html'; // o el nombre correcto de tu archivo principal
+    }
+  </script>
+</body>
+</html>

@@ -719,6 +719,62 @@ background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
 .email-icon {
 background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23D44638' d='M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z'/%3E%3C/svg%3E");
 }
+
+
+.toolbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: white;
+  padding: 12px 16px;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  border-top: 1px solid var(--light-green);
+}
+
+.tool-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  text-decoration: none;
+  padding: 12px 24px;
+  border-radius: 14px;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+  transform: translateY(0);
+}
+
+.tool-btn:hover,
+.tool-btn:focus {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(76, 175, 80, 0.45);
+  outline: none;
+}
+
+.tool-icon {
+  font-size: 1.2rem;
+}
+
+.tool-label {
+  white-space: nowrap;
+}
+
+/* Responsive: ajuste en móviles pequeños */
+@media (max-width: 480px) {
+  .tool-btn {
+    padding: 10px 18px;
+    font-size: 0.95rem;
+  }
+}
+
+
 </style>
 </head>
 <body>
@@ -757,6 +813,15 @@ background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
 <p class="subtitle">Registro de Ventas y Gastos</p>
 </div>
 </div>
+
+<!-- Franja de Herramientas Moderna -->
+<div class="toolbar">
+  <a href="control_interno.html" class="tool-btn">
+    <span class="tool-icon">↗️</span>
+    <span class="tool-label">CONTROL INTERNO </span>
+  </a>
+</div>
+
 </header>
 <div class="dashboard">
 <div class="card">
