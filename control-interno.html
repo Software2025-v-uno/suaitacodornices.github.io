@@ -12,126 +12,159 @@
       --secondary: #388E3C;
       --light-green: #81C784;
       --dark-green: #2E7D32;
+      --expense-color: #FF9800;
       --white: #FFFFFF;
       --gray: #616161;
       --light-bg: #e8f5e9;
       --medium-bg: #c8e6c9;
+      --dark-bg: #a5d6a7;
+      --share-bg: #f8f9fa;
+      --share-border: #e9ecef;
     }
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      -webkit-tap-highlight-color: transparent;
     }
     body {
-      background: linear-gradient(135deg, var(--light-bg) 0%, var(--medium-bg) 100%);
+      background: linear-gradient(135deg, var(--light-bg) 0%, var(--medium-bg) 50%, var(--dark-bg) 100%);
       min-height: 100vh;
+      padding: 12px;
       color: #333;
-      overflow: hidden;
+      transition: all 0.3s ease;
     }
-
-    /* === Pantalla de carga con logo animado === */
-    .loader-screen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, var(--light-bg) 0%, var(--medium-bg) 100%);
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    /* Authentication Screen */
+    .auth-container {
       display: flex;
       justify-content: center;
       align-items: center;
-      z-index: 9999;
-      opacity: 1;
-      transition: opacity 0.8s ease;
+      min-height: 100vh;
+      position: relative;
+      z-index: 10;
     }
-    .logo-animated {
-      width: 120px;
-      height: 120px;
+    .auth-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      padding: 32px;
+      width: 94%;
+      max-width: 450px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+      position: relative;
+      overflow: hidden;
+      animation: slideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .auth-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary), var(--primary));
+    }
+    .logo-container {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .logo {
+      width: 100px;
+      height: 100px;
       background: url('img/codorniz.jpg');
       background-size: contain;
       background-position: center;
       background-repeat: no-repeat;
       border-radius: 50%;
-      filter: blur(8px);
-      animation: focusIn 2s forwards;
+      margin: 0 auto 16px;
     }
-    @keyframes focusIn {
-      0% { transform: scale(0.8); filter: blur(8px); opacity: 0; }
-      50% { transform: scale(1.1); filter: blur(4px); opacity: 1; }
-      100% { transform: scale(1); filter: blur(0); opacity: 1; }
-    }
-
-    /* === PIN Screen === */
-    .pin-container {
-      text-align: center;
-      background: white;
-      padding: 24px 16px;
-      border-radius: 16px;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.15);
-      width: 94%;
-      max-width: 400px;
-      position: relative;
-      overflow: hidden;
-      margin-top: 20px;
-    }
-    .pin-title {
-      font-size: 1.6rem;
+    .auth-title {
+      font-size: 1.8rem;
       color: var(--dark-green);
-      margin: 16px 0 8px;
+      margin-bottom: 8px;
       font-weight: 700;
+      text-align: center;
     }
-    .pin-input {
+    .auth-subtitle {
+      color: var(--gray);
+      margin-bottom: 24px;
+      font-size: 1rem;
+      text-align: center;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--dark-green);
+      font-size: 0.95rem;
+    }
+    input {
       width: 100%;
       padding: 14px;
-      border: 2px solid var(--light-green);
-      border-radius: 10px;
-      font-size: 1.8rem;
-      text-align: center;
-      margin: 16px 0;
-      background: white;
-      font-weight: bold;
-      -webkit-text-security: disc;
-      text-security: disc;
-      caret-color: transparent;
-    }
-    .pin-pad {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-top: 16px;
-    }
-    .pin-btn {
-      height: 50px;
-      background: white;
       border: 1.5px solid var(--light-green);
-      border-radius: 12px;
-      color: var(--dark-green);
-      font-size: 1.4rem;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.2s ease;
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background-color: white;
     }
-    .pin-btn:hover {
-      background: var(--light-green);
+    input:focus {
+      outline: none;
+      border-color: var(--secondary);
+      box-shadow: 0 0 0 3px rgba(56, 142, 60, 0.2);
     }
-    .pin-btn.action {
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 14px;
       background: var(--primary);
       color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+      box-shadow: 0 3px 6px rgba(76, 175, 80, 0.3);
+      touch-action: manipulation;
     }
-
-    /* === Main Content === */
-    .container {
-      max-width: 1000px;
-      margin: 0 auto;
+    .btn:hover {
+      background: var(--secondary);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(56, 142, 60, 0.4);
+    }
+    .captcha-container {
+      background: var(--light-bg);
       padding: 16px;
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.6s ease, transform 0.6s ease;
+      border-radius: 10px;
+      margin: 20px 0;
+      text-align: center;
     }
-    .main-visible {
-      opacity: 1 !important;
-      transform: translateY(0) !important;
+    .captcha-text {
+      font-size: 1.8rem;
+      font-weight: bold;
+      letter-spacing: 5px;
+      margin: 10px 0;
+      color: var(--dark-green);
+      font-family: monospace;
+    }
+    .captcha-input {
+      width: 100%;
+      padding: 12px;
+      text-align: center;
+      font-size: 1.2rem;
+      margin-top: 10px;
+    }
+    /* Main Content */
+    #main-content {
+      display: none;
     }
     header {
       text-align: center;
@@ -141,82 +174,45 @@
       border-radius: 14px;
       box-shadow: 0 6px 16px rgba(0,0,0,0.08);
     }
-    .logo {
-      width: 80px;
-      height: 80px;
-      background: url('img/codorniz.jpg');
-      background-size: contain;
-      background-position: center;
-      background-repeat: no-repeat;
-      border-radius: 50%;
-      margin: 0 auto 12px;
-    }
-    h1 {
-      color: var(--dark-green);
-      font-size: 1.8rem;
-      margin-bottom: 6px;
-      font-weight: 700;
-    }
-
-    /* Botones modernos */
-    .btn-modern {
-      display: block;
-      width: 100%;
-      padding: 14px;
-      border: none;
-      border-radius: 12px;
-      font-size: 1.05rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      text-align: center;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      margin: 8px 0;
-    }
-    .btn-sales {
-      background: linear-gradient(135deg, #4CAF50, #2E7D32);
-      color: white;
-    }
-    .btn-expenses {
-      background: linear-gradient(135deg, #FF9800, #E65100);
-      color: white;
-    }
-    .btn-top {
-      background: linear-gradient(135deg, #66BB6A, #1B5E20);
-      color: white;
-    }
-    .btn-client {
-      background: linear-gradient(135deg, #2196F3, #0288D1);
-      color: white;
-    }
-    .btn-back {
-      background: linear-gradient(135deg, #9E9E9E, #616161);
-      color: white;
-    }
-    .btn-modern:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 6px 14px rgba(0,0,0,0.15);
-    }
-    .btn-modern:active {
-      transform: translateY(0);
-    }
-
     nav {
       background: white;
       border-radius: 14px;
-      padding: 16px;
+      padding: 20px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.08);
       margin-bottom: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
     }
-    input[type="text"] {
-      width: 100%;
-      padding: 12px;
+    select, input[type="text"] {
+      width: 280px;
+      padding: 10px;
+      margin: 0;
       border: 1.5px solid var(--light-green);
-      border-radius: 10px;
-      margin: 8px 0;
-      font-size: 1rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      background: white;
+      transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
-
+    /* Botones compactos y uniformes */
+    .btn-modern {
+      width: 280px !important;
+      padding: 10px 16px !important;
+      font-size: 0.95rem !important;
+      border-radius: 8px !important;
+      background: linear-gradient(135deg, var(--primary), var(--secondary)) !important;
+      color: white !important;
+      font-weight: 600 !important;
+      cursor: pointer !important;
+      border: none !important;
+      box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3) !important;
+      transition: all 0.2s ease !important;
+    }
+    .btn-modern:hover {
+      transform: translateY(-2px) !important;
+      box-shadow: 0 4px 8px rgba(56, 142, 60, 0.4) !important;
+    }
     .results {
       background: white;
       border-radius: 12px;
@@ -247,8 +243,6 @@
       color: var(--gray);
       font-size: 0.85rem;
     }
-
-    /* Recibo oculto */
     #receipt-template {
       display: none;
       width: 100%;
@@ -263,48 +257,68 @@
       text-align: center;
       margin-top: 20px;
     }
+    @keyframes slideIn {
+      from { transform: translateY(-20px) scale(0.95); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+    .notification {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 12px 24px;
+      border-radius: 10px;
+      color: white;
+      font-weight: 600;
+      z-index: 10000;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      animation: fadeIn 0.3s, fadeOut 0.3s 2.7s forwards;
+    }
+    @keyframes fadeOut {
+      to { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+    }
+    .error { background: #f44336; }
+    .success { background: #4CAF50; }
   </style>
 </head>
 <body>
-  <!-- Pantalla de carga con logo -->
-  <div class="loader-screen" id="loader">
-    <div class="logo-animated"></div>
-  </div>
-
-  <!-- PIN Screen -->
-  <div id="pin-screen" style="display:none; text-align:center; padding:20px;">
-    <div class="pin-container">
-      <h2 class="pin-title">🔒 Acceso Restringido</h2>
-      <p style="color:var(--gray); margin-bottom:12px;">Ingrese el PIN para acceder al Control Interno</p>
-      <input type="password" id="pin-input" class="pin-input" maxlength="4" autocomplete="off">
-      <div class="pin-pad">
-        <button class="pin-btn" data-val="1">1</button>
-        <button class="pin-btn" data-val="2">2</button>
-        <button class="pin-btn" data-val="3">3</button>
-        <button class="pin-btn" data-val="4">4</button>
-        <button class="pin-btn" data-val="5">5</button>
-        <button class="pin-btn" data-val="6">6</button>
-        <button class="pin-btn" data-val="7">7</button>
-        <button class="pin-btn" data-val="8">8</button>
-        <button class="pin-btn" data-val="9">9</button>
-        <button class="pin-btn action" onclick="clearPin()">C</button>
-        <button class="pin-btn" data-val="0">0</button>
-        <button class="pin-btn action" onclick="submitPin()">✓</button>
+  <!-- Pantalla de Autenticación -->
+  <div class="auth-container" id="auth-screen">
+    <div class="auth-card">
+      <div class="logo-container">
+        <div class="logo"></div>
+        <h2 class="auth-title">Control Interno</h2>
+        <p class="auth-subtitle">El Portachuelo - Sistema de Gestión</p>
       </div>
+      
+      <div class="form-group">
+        <label for="password">Contraseña de Acceso</label>
+        <input type="password" id="password" placeholder="Ingrese su contraseña">
+      </div>
+      
+      <div class="captcha-container">
+        <p>Verificación de seguridad</p>
+        <div class="captcha-text" id="captcha-text">AB3X9</div>
+        <input type="text" id="captcha-input" class="captcha-input" placeholder="Ingrese los caracteres mostrados">
+      </div>
+      
+      <button class="btn" id="login-btn">Acceder al Sistema</button>
     </div>
   </div>
 
-  <!-- Contenido principal -->
+  <!-- Contenido Principal -->
   <div class="container" id="main-content">
     <header>
-      <div class="logo"></div>
-      <h1>Control Interno</h1>
-      <p>El Portachuelo – Suaita, Santander</p>
+      <div class="logo-container">
+        <div class="logo"></div>
+        <h1>Control Interno</h1>
+        <p class="subtitle">El Portachuelo – Suaita, Santander</p>
+      </div>
     </header>
 
     <nav>
-      <button class="btn-modern btn-back" onclick="goToMain()">← Volver al Registro Principal</button>
-      <select id="mes-select" style="padding:12px;border-radius:10px;margin:8px 0;width:100%;">
+      <button class="btn-modern" onclick="goToMain()">← Volver al Registro Principal</button>
+      <select id="mes-select">
         <option value="">Seleccione un mes</option>
         <option value="0">Enero</option>
         <option value="1">Febrero</option>
@@ -319,16 +333,14 @@
         <option value="10">Noviembre</option>
         <option value="11">Diciembre</option>
       </select>
-      <button class="btn-modern btn-sales" onclick="descargarExtractoVentas()">📥 Extracto Mensual de Ventas</button>
-      <button class="btn-modern btn-expenses" onclick="descargarExtractoGastos()">💸 Extracto Mensual de Gastos</button>
-      <button class="btn-modern btn-top" onclick="clientesTop()">👑 Clientes con +4 Ventas</button>
+      <button class="btn-modern" onclick="descargarExtractoVentas()">📥 Extracto Mensual de Ventas</button>
+      <button class="btn-modern" onclick="descargarExtractoGastos()">💸 Extracto Mensual de Gastos</button>
+      <button class="btn-modern" onclick="clientesTop()">👑 Clientes con +4 Ventas</button>
       <input type="text" id="cliente-input" placeholder="Nombre del cliente" />
-      <button class="btn-modern btn-client" onclick="ventasPorCliente()">🔍 Ventas por Cliente</button>
+      <button class="btn-modern" onclick="ventasPorCliente()">🔍 Ventas por Cliente</button>
     </nav>
 
-    <div class="results" id="resultados">
-      <!-- Resultados dinámicos -->
-    </div>
+    <div class="results" id="resultados"></div>
 
     <footer>
       <p>El Portachuelo &copy; 2026 | Sistema de Control Interno Seguro</p>
@@ -350,72 +362,79 @@
     </p>
   </div>
 
-  <!-- Librerías externas (corregidas sin espacios) -->
+  <!-- Librerías externas -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script>window.jsPDF = window.jspdf.jsPDF;</script>
 
   <script>
-    // === Animación inicial ===
-    setTimeout(() => {
-      document.getElementById('loader').style.opacity = '0';
-      setTimeout(() => {
-        document.getElementById('loader').style.display = 'none';
-        document.getElementById('pin-screen').style.display = 'block';
-      }, 800);
-    }, 2500);
-
-    // === PIN ===
-    let pin = '';
-    function clearPin() { pin = ''; document.getElementById('pin-input').value = ''; }
-    function submitPin() {
-      if (pin === '2007') {
-        document.getElementById('pin-screen').style.display = 'none';
-        document.getElementById('main-content').classList.add('main-visible');
-      } else {
-        alert('❌ PIN incorrecto');
-        clearPin();
+    // === CAPTCHA ===
+    function generateCaptcha() {
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      let captcha = '';
+      for (let i = 0; i < 5; i++) {
+        captcha += chars.charAt(Math.floor(Math.random() * chars.length));
       }
+      document.getElementById('captcha-text').textContent = captcha;
     }
-    document.querySelectorAll('.pin-btn[data-val]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        if (pin.length < 4) {
-          pin += btn.dataset.val;
-          document.getElementById('pin-input').value = '•'.repeat(pin.length);
-        }
-      });
+    generateCaptcha();
+
+    // === NOTIFICACIONES ===
+    function showNotification(message, type) {
+      const notification = document.createElement('div');
+      notification.className = `notification ${type}`;
+      notification.textContent = message;
+      document.body.appendChild(notification);
+      setTimeout(() => notification.remove(), 3000);
+    }
+
+    // === AUTENTICACIÓN ===
+    document.getElementById('login-btn').addEventListener('click', () => {
+      const password = document.getElementById('password').value.trim();
+      const captcha = document.getElementById('captcha-input').value.trim();
+      
+      if (!password) return showNotification('Ingrese la contraseña', 'error');
+      if (!captcha || captcha !== document.getElementById('captcha-text').textContent) {
+        showNotification('Verificación incorrecta', 'error');
+        generateCaptcha();
+        document.getElementById('captcha-input').value = '';
+        return;
+      }
+      
+      if (password === 'control2026') {
+        document.getElementById('auth-screen').style.display = 'none';
+        document.getElementById('main-content').style.display = 'block';
+        showNotification('¡Bienvenido!', 'success');
+      } else {
+        showNotification('Contraseña incorrecta', 'error');
+        document.getElementById('password').value = '';
+      }
     });
 
-    // ✅ FUNCIÓN DE LECTURA SEGURA - NO INTERFIERE CON ESCRITURAS
+    // === LECTURA SEGURA DE INDEXEDDB ===
     async function getAllFromStore(storeName) {
       return new Promise((resolve, reject) => {
-        // Abrir conexión temporal SOLO para lectura
         const req = indexedDB.open('PortachueloDB', 2);
-        
         req.onsuccess = () => {
           const db = req.result;
-          // ⚠️ Transacción SOLO de lectura
           const tx = db.transaction([storeName], 'readonly');
           const store = tx.objectStore(storeName);
           const getAllReq = store.getAll();
-          
           getAllReq.onsuccess = () => {
             resolve(getAllReq.result);
-            // Cerrar la conexión inmediatamente después de leer
             db.close();
           };
-          
           getAllReq.onerror = () => {
             db.close();
             reject(getAllReq.error);
           };
         };
-        
         req.onerror = () => reject(req.error);
-        // ⚠️ IMPORTANTE: No definimos onupgradeneeded para evitar conflictos de versión
+        // No onupgradeneeded → evita conflictos
       });
     }
 
+    // === FUNCIONES PRINCIPALES ===
     function formatDate(dateStr) {
       const d = new Date(dateStr);
       return d.toLocaleString('es-CO', {
@@ -427,7 +446,7 @@
       });
     }
 
-    // ✅ Corregido: sin espacios en la URL
+    // ✅ CORREGIDA: Sin espacios en la URL
     function generateQR(text) {
       const encoded = encodeURIComponent(text);
       return `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encoded}`;
@@ -453,14 +472,13 @@
       });
     }
 
-    // === Funciones de control ===
     async function descargarExtractoVentas() {
       const mes = document.getElementById('mes-select').value;
-      if (mes === '') return alert('Seleccione un mes');
+      if (mes === '') return showNotification('Seleccione un mes', 'error');
       try {
         const ventas = await getAllFromStore('ventas');
         const filtradas = await filtrarPorMes(ventas, parseInt(mes));
-        if (filtradas.length === 0) return alert('No hay ventas este mes');
+        if (filtradas.length === 0) return showNotification('No hay ventas este mes', 'error');
         const headers = ['Factura', 'Cliente', 'Cubetas', 'Total', 'Fecha'];
         const filas = filtradas.map(v => [
           v.factura,
@@ -473,17 +491,17 @@
         generarPDF('extracto-ventas', headers, filas);
       } catch (e) {
         console.error(e);
-        alert('Error al cargar ventas. Asegúrese de que la otra página esté cerrada.');
+        showNotification('Error al cargar ventas', 'error');
       }
     }
 
     async function descargarExtractoGastos() {
       const mes = document.getElementById('mes-select').value;
-      if (mes === '') return alert('Seleccione un mes');
+      if (mes === '') return showNotification('Seleccione un mes', 'error');
       try {
         const gastos = await getAllFromStore('gastos');
         const filtrados = await filtrarPorMes(gastos, parseInt(mes));
-        if (filtrados.length === 0) return alert('No hay gastos este mes');
+        if (filtrados.length === 0) return showNotification('No hay gastos este mes', 'error');
         const tipoLabels = { purina: 'Purina', medicamento: 'Medicamento', transporte: 'Transporte', mantenimiento: 'Mant.', otros: 'Otros' };
         const headers = ['Tipo', 'Descripción', 'Monto', 'Fecha'];
         const filas = filtrados.map(g => [
@@ -496,7 +514,7 @@
         generarPDF('extracto-gastos', headers, filas);
       } catch (e) {
         console.error(e);
-        alert('Error al cargar gastos.');
+        showNotification('Error al cargar gastos', 'error');
       }
     }
 
@@ -516,23 +534,23 @@
               .reduce((sum, v) => sum + v.total, 0);
             return [cliente, count, `$${total.toLocaleString('es-CO')}`];
           });
-        if (topClientes.length === 0) return alert('No hay clientes con más de 4 ventas');
+        if (topClientes.length === 0) return showNotification('No hay clientes con +4 ventas', 'error');
         const headers = ['Cliente', 'N° Ventas', 'Total Comprado ($)'];
         mostrarTabla('Clientes con más de 4 ventas', headers, topClientes);
         generarPDF('clientes-top', headers, topClientes);
       } catch (e) {
         console.error(e);
-        alert('Error al cargar clientes.');
+        showNotification('Error al cargar clientes', 'error');
       }
     }
 
     async function ventasPorCliente() {
       const nombre = document.getElementById('cliente-input').value.trim();
-      if (!nombre) return alert('Ingrese nombre de cliente');
+      if (!nombre) return showNotification('Ingrese nombre de cliente', 'error');
       try {
         const ventas = await getAllFromStore('ventas');
         const delCliente = ventas.filter(v => v.cliente.toLowerCase().includes(nombre.toLowerCase()));
-        if (delCliente.length === 0) return alert('No se encontraron ventas');
+        if (delCliente.length === 0) return showNotification('No se encontraron ventas', 'error');
         const headers = ['Factura', 'Cubetas', 'Total', 'Crédito', 'Fecha'];
         const filas = delCliente.map(v => [
           v.factura,
@@ -545,10 +563,11 @@
         generarPDF(`ventas-${nombre}`, headers, filas);
       } catch (e) {
         console.error(e);
-        alert('Error al buscar cliente.');
+        showNotification('Error al buscar cliente', 'error');
       }
     }
 
+    // ✅ CORREGIDA: Espera a que el QR se cargue
     async function generarPDF(nombre, headers, filas) {
       const template = document.getElementById('receipt-template');
       const details = document.getElementById('receipt-details');
@@ -568,19 +587,43 @@
       document.getElementById('receipt-factura').textContent = nombre.toUpperCase();
 
       const qrText = `Reporte: ${nombre}\nGenerado: ${new Date().toLocaleString('es-CO')}\nOrigen: Control Interno`;
-      qrContainer.innerHTML = `<img src="${generateQR(qrText)}" alt="QR" style="width:120px;height:120px;">`;
-
-      template.style.display = 'block';
-      const { jsPDF } = window.jspdf;
-      html2canvas(template).then(canvas => {
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const imgWidth = 210;
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-        pdf.save(`${nombre}.pdf`);
-        template.style.display = 'none';
-      });
+      const qrUrl = generateQR(qrText);
+      
+      const qrImage = new Image();
+      qrImage.src = qrUrl;
+      
+      qrImage.onload = () => {
+        qrContainer.innerHTML = '';
+        qrContainer.appendChild(qrImage);
+        
+        template.style.display = 'block';
+        const { jsPDF } = window.jspdf;
+        html2canvas(template).then(canvas => {
+          const imgData = canvas.toDataURL('img/logo.png');
+          const pdf = new jsPDF('p', 'mm', 'a4');
+          const imgWidth = 210;
+          const imgHeight = (canvas.height * imgWidth) / canvas.width;
+          pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+          pdf.save(`${nombre}.pdf`);
+          template.style.display = 'none';
+        });
+      };
+      
+      qrImage.onerror = () => {
+        console.error('Error al cargar QR');
+        qrContainer.innerHTML = '<p style="color:red;">Error QR</p>';
+        template.style.display = 'block';
+        const { jsPDF } = window.jspdf;
+        html2canvas(template).then(canvas => {
+          const imgData = canvas.toDataURL('image/png');
+          const pdf = new jsPDF('p', 'mm', 'a4');
+          const imgWidth = 210;
+          const imgHeight = (canvas.height * imgWidth) / canvas.width;
+          pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+          pdf.save(`${nombre}.pdf`);
+          template.style.display = 'none';
+        });
+      };
     }
 
     function goToMain() {
