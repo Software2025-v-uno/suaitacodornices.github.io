@@ -391,7 +391,7 @@
         return;
       }
       
-      if (password === 'control2026') {
+      if (password === 'control2025') {
         document.getElementById('auth-screen').style.display = 'none';
         document.getElementById('main-content').style.display = 'block';
         showNotification('¡Bienvenido!', 'success');
@@ -412,7 +412,7 @@
           const getAllReq = store.getAll();
           getAllReq.onsuccess = () => {
             resolve(getAllReq.result);
-            db.close(); // Cerrar inmediatamente
+            db.close();
           };
           getAllReq.onerror = () => {
             db.close();
@@ -436,6 +436,7 @@
       });
     }
 
+    // ✅ CORREGIDA: Sin espacios en la URL
     function generateQR(text) {
       const encoded = encodeURIComponent(text);
       return `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encoded}`;
@@ -556,6 +557,7 @@
       }
     }
 
+    // ✅ CORREGIDA: Espera a que el QR se cargue
     async function generarPDF(nombre, headers, filas) {
       const template = document.getElementById('receipt-template');
       const details = document.getElementById('receipt-details');
@@ -575,23 +577,47 @@
       document.getElementById('receipt-factura').textContent = nombre.toUpperCase();
 
       const qrText = `Reporte: ${nombre}\nGenerado: ${new Date().toLocaleString('es-CO')}\nOrigen: Control Interno`;
-      qrContainer.innerHTML = `<img src="${generateQR(qrText)}" alt="QR" style="width:120px;height:120px;">`;
-
-      template.style.display = 'block';
-      const { jsPDF } = window.jspdf;
-      html2canvas(template).then(canvas => {
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const imgWidth = 210;
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-        pdf.save(`${nombre}.pdf`);
-        template.style.display = 'none';
-      });
+      const qrUrl = generateQR(qrText);
+      
+      const qrImage = new Image();
+      qrImage.src = qrUrl;
+      
+      qrImage.onload = () => {
+        qrContainer.innerHTML = '';
+        qrContainer.appendChild(qrImage);
+        
+        template.style.display = 'block';
+        const { jsPDF } = window.jspdf;
+        html2canvas(template).then(canvas => {
+          const imgData = canvas.toDataURL('image/png');
+          const pdf = new jsPDF('p', 'mm', 'a4');
+          const imgWidth = 210;
+          const imgHeight = (canvas.height * imgWidth) / canvas.width;
+          pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+          pdf.save(`${nombre}.pdf`);
+          template.style.display = 'none';
+        });
+      };
+      
+      qrImage.onerror = () => {
+        console.error('Error al cargar QR');
+        qrContainer.innerHTML = '<p style="color:red;">Error QR</p>';
+        template.style.display = 'block';
+        const { jsPDF } = window.jspdf;
+        html2canvas(template).then(canvas => {
+          const imgData = canvas.toDataURL('image/png');
+          const pdf = new jsPDF('p', 'mm', 'a4');
+          const imgWidth = 210;
+          const imgHeight = (canvas.height * imgWidth) / canvas.width;
+          pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+          pdf.save(`${nombre}.pdf`);
+          template.style.display = 'none';
+        });
+      };
     }
 
     function goToMain() {
-      window.location.href = 'index.html';
+      window.location.href = 'pagina2.html';
     }
   </script>
 </body>
