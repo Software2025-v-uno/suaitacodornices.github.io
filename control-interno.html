@@ -26,169 +26,112 @@
     body {
       background: linear-gradient(135deg, var(--light-bg) 0%, var(--medium-bg) 100%);
       min-height: 100vh;
-      padding: 12px;
       color: #333;
+      overflow: hidden;
     }
-    .container {
-      max-width: 1000px;
-      margin: 0 auto;
+
+    /* === Pantalla de carga con logo animado === */
+    .loader-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, var(--light-bg) 0%, var(--medium-bg) 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      opacity: 1;
+      transition: opacity 0.8s ease;
     }
-    header {
+    .logo-animated {
+      width: 120px;
+      height: 120px;
+      background: url('img/codorniz.jpg');
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+      border-radius: 50%;
+      filter: blur(8px);
+      animation: focusIn 2s forwards;
+    }
+    @keyframes focusIn {
+      0% { transform: scale(0.8); filter: blur(8px); opacity: 0; }
+      50% { transform: scale(1.1); filter: blur(4px); opacity: 1; }
+      100% { transform: scale(1); filter: blur(0); opacity: 1; }
+    }
+
+    /* === PIN Screen === */
+    .pin-container {
       text-align: center;
-      margin-bottom: 20px;
-      padding: 16px;
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 14px;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+      background: white;
+      padding: 24px 16px;
+      border-radius: 16px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+      width: 94%;
+      max-width: 400px;
       position: relative;
       overflow: hidden;
-      transition: all 0.3s ease;
-    }
-    .logo {
-      width: 80px;
-      height: 80px;
-      background: url('img/codorniz.jpg');
-      background-size: contain;
-      background-position: center;
-      background-repeat: no-repeat;
-      border-radius: 50%;
-      margin: 0 auto 12px;
-    }
-    h1 {
-      color: var(--dark-green);
-      font-size: 1.8rem;
-      margin-bottom: 6px;
-      font-weight: 700;
-    }
-    nav {
-      background: white;
-      border-radius: 12px;
-      padding: 16px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-      margin-bottom: 24px;
-      transition: all 0.3s ease;
-    }
-    select, input, button {
-      width: 100%;
-      padding: 12px;
-      margin: 8px 0;
-      border: 1.5px solid var(--light-green);
-      border-radius: 10px;
-      font-size: 1rem;
-      background: white;
-      transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-    button {
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-      border: none;
-      box-shadow: 0 3px 6px rgba(76, 175, 80, 0.3);
-    }
-    button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 12px rgba(56, 142, 60, 0.4);
-    }
-    button:active {
-      transform: translateY(0);
-    }
-    .btn-top {
-      background: linear-gradient(135deg, #66BB6A, #2E7D32);
-      box-shadow: 0 4px 10px rgba(46, 125, 50, 0.4);
-    }
-    .btn-top:hover {
-      background: linear-gradient(135deg, #4CAF50, #1B5E20);
-      box-shadow: 0 6px 14px rgba(46, 125, 50, 0.5);
-    }
-    .results {
-      background: white;
-      border-radius: 12px;
-      padding: 16px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-      margin-top: 16px;
-      max-height: 400px;
-      overflow-y: auto;
-      opacity: 0;
-      transform: translateY(10px);
-      animation: fadeInUp 0.5s forwards;
-    }
-    @keyframes fadeInUp {
-      to { opacity: 1; transform: translateY(0); }
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 12px;
-    }
-    th, td {
-      padding: 10px;
-      text-align: left;
-      border-bottom: 1px solid #eee;
-    }
-    th {
-      background: var(--light-green);
-      color: var(--dark-green);
-    }
-    footer {
-      text-align: center;
-      margin-top: 24px;
-      padding: 12px;
-      color: var(--gray);
-      font-size: 0.85rem;
-    }
-    /* Recibo oculto */
-    #receipt-template {
-      display: none;
-      width: 100%;
-      max-width: 600px;
-      margin: 0 auto;
-      background: white;
-      padding: 30px;
-      font-family: Arial, sans-serif;
-      border-radius: 10px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.1);
-    }
-    .receipt-qr-container {
-      text-align: center;
       margin-top: 20px;
     }
-  </style>
-</head>
-<body><!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#4CAF50" />
-  <title>Control Interno | El Portachuelo</title>
-  <link rel="icon" href="img/logo.png" />
-  <style>
-    :root {
-      --primary: #4CAF50;
-      --secondary: #388E3C;
-      --light-green: #81C784;
-      --dark-green: #2E7D32;
-      --white: #FFFFFF;
-      --gray: #616161;
-      --light-bg: #e8f5e9;
-      --medium-bg: #c8e6c9;
+    .pin-title {
+      font-size: 1.6rem;
+      color: var(--dark-green);
+      margin: 16px 0 8px;
+      font-weight: 700;
     }
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    .pin-input {
+      width: 100%;
+      padding: 14px;
+      border: 2px solid var(--light-green);
+      border-radius: 10px;
+      font-size: 1.8rem;
+      text-align: center;
+      margin: 16px 0;
+      background: white;
+      font-weight: bold;
+      -webkit-text-security: disc;
+      text-security: disc;
+      caret-color: transparent;
     }
-    body {
-      background: linear-gradient(135deg, var(--light-bg) 0%, var(--medium-bg) 100%);
-      min-height: 100vh;
-      padding: 12px;
-      color: #333;
+    .pin-pad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 16px;
     }
+    .pin-btn {
+      height: 50px;
+      background: white;
+      border: 1.5px solid var(--light-green);
+      border-radius: 12px;
+      color: var(--dark-green);
+      font-size: 1.4rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .pin-btn:hover {
+      background: var(--light-green);
+    }
+    .pin-btn.action {
+      background: var(--primary);
+      color: white;
+    }
+
+    /* === Main Content === */
     .container {
       max-width: 1000px;
       margin: 0 auto;
+      padding: 16px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .main-visible {
+      opacity: 1 !important;
+      transform: translateY(0) !important;
     }
     header {
       text-align: center;
@@ -214,43 +157,66 @@
       margin-bottom: 6px;
       font-weight: 700;
     }
+
+    /* Botones modernos */
+    .btn-modern {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      margin: 8px 0;
+    }
+    .btn-sales {
+      background: linear-gradient(135deg, #4CAF50, #2E7D32);
+      color: white;
+    }
+    .btn-expenses {
+      background: linear-gradient(135deg, #FF9800, #E65100);
+      color: white;
+    }
+    .btn-top {
+      background: linear-gradient(135deg, #66BB6A, #1B5E20);
+      color: white;
+    }
+    .btn-client {
+      background: linear-gradient(135deg, #2196F3, #0288D1);
+      color: white;
+    }
+    .btn-back {
+      background: linear-gradient(135deg, #9E9E9E, #616161);
+      color: white;
+    }
+    .btn-modern:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+    }
+    .btn-modern:active {
+      transform: translateY(0);
+    }
+
     nav {
       background: white;
-      border-radius: 12px;
+      border-radius: 14px;
       padding: 16px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.08);
       margin-bottom: 24px;
     }
-    select, input, button {
+    input[type="text"] {
       width: 100%;
       padding: 12px;
-      margin: 8px 0;
       border: 1.5px solid var(--light-green);
       border-radius: 10px;
+      margin: 8px 0;
       font-size: 1rem;
-      background: white;
-      transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
-    button {
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-      border: none;
-      box-shadow: 0 3px 6px rgba(76, 175, 80, 0.3);
-    }
-    button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 12px rgba(56, 142, 60, 0.4);
-    }
-    .btn-top {
-      background: linear-gradient(135deg, #66BB6A, #2E7D32);
-      box-shadow: 0 4px 10px rgba(46, 125, 50, 0.4);
-    }
-    .btn-top:hover {
-      background: linear-gradient(135deg, #4CAF50, #1B5E20);
-      box-shadow: 0 6px 14px rgba(46, 125, 50, 0.5);
-    }
+
     .results {
       background: white;
       border-radius: 12px;
@@ -259,12 +225,6 @@
       margin-top: 16px;
       max-height: 400px;
       overflow-y: auto;
-      opacity: 0;
-      transform: translateY(10px);
-      animation: fadeInUp 0.5s forwards;
-    }
-    @keyframes fadeInUp {
-      to { opacity: 1; transform: translateY(0); }
     }
     table {
       width: 100%;
@@ -287,6 +247,8 @@
       color: var(--gray);
       font-size: 0.85rem;
     }
+
+    /* Recibo oculto */
     #receipt-template {
       display: none;
       width: 100%;
@@ -304,7 +266,36 @@
   </style>
 </head>
 <body>
-  <div class="container">
+  <!-- Pantalla de carga con logo -->
+  <div class="loader-screen" id="loader">
+    <div class="logo-animated"></div>
+  </div>
+
+  <!-- PIN Screen -->
+  <div id="pin-screen" style="display:none; text-align:center; padding:20px;">
+    <div class="pin-container">
+      <h2 class="pin-title">🔒 Acceso Restringido</h2>
+      <p style="color:var(--gray); margin-bottom:12px;">Ingrese el PIN para acceder al Control Interno</p>
+      <input type="password" id="pin-input" class="pin-input" maxlength="4" autocomplete="off">
+      <div class="pin-pad">
+        <button class="pin-btn" data-val="1">1</button>
+        <button class="pin-btn" data-val="2">2</button>
+        <button class="pin-btn" data-val="3">3</button>
+        <button class="pin-btn" data-val="4">4</button>
+        <button class="pin-btn" data-val="5">5</button>
+        <button class="pin-btn" data-val="6">6</button>
+        <button class="pin-btn" data-val="7">7</button>
+        <button class="pin-btn" data-val="8">8</button>
+        <button class="pin-btn" data-val="9">9</button>
+        <button class="pin-btn action" onclick="clearPin()">C</button>
+        <button class="pin-btn" data-val="0">0</button>
+        <button class="pin-btn action" onclick="submitPin()">✓</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenido principal -->
+  <div class="container" id="main-content">
     <header>
       <div class="logo"></div>
       <h1>Control Interno</h1>
@@ -312,8 +303,8 @@
     </header>
 
     <nav>
-      <button onclick="goToMain()">← Volver al Registro Principal</button>
-      <select id="mes-select">
+      <button class="btn-modern btn-back" onclick="goToMain()">← Volver al Registro Principal</button>
+      <select id="mes-select" style="padding:12px;border-radius:10px;margin:8px 0;width:100%;">
         <option value="">Seleccione un mes</option>
         <option value="0">Enero</option>
         <option value="1">Febrero</option>
@@ -328,17 +319,19 @@
         <option value="10">Noviembre</option>
         <option value="11">Diciembre</option>
       </select>
-      <button onclick="descargarExtractoVentas()">📥 Extracto Mensual de Ventas</button>
-      <button onclick="descargarExtractoGastos()">💸 Extracto Mensual de Gastos</button>
-      <button class="btn-top" onclick="clientesTop()">👑 Clientes que Más Compran (más de 4 ventas)</button>
+      <button class="btn-modern btn-sales" onclick="descargarExtractoVentas()">📥 Extracto Mensual de Ventas</button>
+      <button class="btn-modern btn-expenses" onclick="descargarExtractoGastos()">💸 Extracto Mensual de Gastos</button>
+      <button class="btn-modern btn-top" onclick="clientesTop()">👑 Clientes con +4 Ventas</button>
       <input type="text" id="cliente-input" placeholder="Nombre del cliente" />
-      <button onclick="ventasPorCliente()">🔍 Ventas por Cliente</button>
+      <button class="btn-modern btn-client" onclick="ventasPorCliente()">🔍 Ventas por Cliente</button>
     </nav>
 
-    <div class="results" id="resultados"></div>
+    <div class="results" id="resultados">
+      <!-- Resultados dinámicos -->
+    </div>
 
     <footer>
-      <p>El Portachuelo &copy; 2026 | Sistema de Control Interno</p>
+      <p>El Portachuelo &copy; 2026 | Sistema de Control Interno Seguro</p>
     </footer>
   </div>
 
@@ -357,27 +350,69 @@
     </p>
   </div>
 
-  <!-- Librerías externas -->
+  <!-- Librerías externas (corregidas sin espacios) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script>window.jsPDF = window.jspdf.jsPDF;</script>
 
   <script>
-    // ✅ DBManager SOLO LECTURA - NO INTERFIERE CON ESCRITURAS
+    // === Animación inicial ===
+    setTimeout(() => {
+      document.getElementById('loader').style.opacity = '0';
+      setTimeout(() => {
+        document.getElementById('loader').style.display = 'none';
+        document.getElementById('pin-screen').style.display = 'block';
+      }, 800);
+    }, 2500);
+
+    // === PIN ===
+    let pin = '';
+    function clearPin() { pin = ''; document.getElementById('pin-input').value = ''; }
+    function submitPin() {
+      if (pin === '2007') {
+        document.getElementById('pin-screen').style.display = 'none';
+        document.getElementById('main-content').classList.add('main-visible');
+      } else {
+        alert('❌ PIN incorrecto');
+        clearPin();
+      }
+    }
+    document.querySelectorAll('.pin-btn[data-val]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (pin.length < 4) {
+          pin += btn.dataset.val;
+          document.getElementById('pin-input').value = '•'.repeat(pin.length);
+        }
+      });
+    });
+
+    // ✅ FUNCIÓN DE LECTURA SEGURA - NO INTERFIERE CON ESCRITURAS
     async function getAllFromStore(storeName) {
       return new Promise((resolve, reject) => {
+        // Abrir conexión temporal SOLO para lectura
         const req = indexedDB.open('PortachueloDB', 2);
+        
         req.onsuccess = () => {
           const db = req.result;
-          const tx = db.transaction([storeName], 'readonly'); // ⚠️ Solo lectura
+          // ⚠️ Transacción SOLO de lectura
+          const tx = db.transaction([storeName], 'readonly');
           const store = tx.objectStore(storeName);
           const getAllReq = store.getAll();
-          getAllReq.onsuccess = () => resolve(getAllReq.result);
-          getAllReq.onerror = () => reject(getAllReq.error);
-          tx.oncomplete = () => db.close(); // Cerrar inmediatamente
+          
+          getAllReq.onsuccess = () => {
+            resolve(getAllReq.result);
+            // Cerrar la conexión inmediatamente después de leer
+            db.close();
+          };
+          
+          getAllReq.onerror = () => {
+            db.close();
+            reject(getAllReq.error);
+          };
         };
+        
         req.onerror = () => reject(req.error);
-        // ⚠️ NO definimos onupgradeneeded → evita conflictos de versión
+        // ⚠️ IMPORTANTE: No definimos onupgradeneeded para evitar conflictos de versión
       });
     }
 
@@ -392,6 +427,7 @@
       });
     }
 
+    // ✅ Corregido: sin espacios en la URL
     function generateQR(text) {
       const encoded = encodeURIComponent(text);
       return `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encoded}`;
@@ -417,7 +453,7 @@
       });
     }
 
-    // === FUNCIONES PRINCIPALES ===
+    // === Funciones de control ===
     async function descargarExtractoVentas() {
       const mes = document.getElementById('mes-select').value;
       if (mes === '') return alert('Seleccione un mes');
@@ -437,7 +473,7 @@
         generarPDF('extracto-ventas', headers, filas);
       } catch (e) {
         console.error(e);
-        alert('Error al cargar ventas. Asegúrese de que la página principal esté cerrada o espere.');
+        alert('Error al cargar ventas. Asegúrese de que la otra página esté cerrada.');
       }
     }
 
@@ -460,7 +496,7 @@
         generarPDF('extracto-gastos', headers, filas);
       } catch (e) {
         console.error(e);
-        alert('Error al cargar gastos. Intente nuevamente.');
+        alert('Error al cargar gastos.');
       }
     }
 
@@ -513,7 +549,6 @@
       }
     }
 
-    // === PDF ===
     async function generarPDF(nombre, headers, filas) {
       const template = document.getElementById('receipt-template');
       const details = document.getElementById('receipt-details');
@@ -549,263 +584,7 @@
     }
 
     function goToMain() {
-      window.location.href = 'index.html';
-    }
-  </script>
-</body>
-</html>
-
-
-  <div class="container">
-    <header>
-      <div class="logo"></div>
-      <h1>Control Interno</h1>
-      <p>El Portachuelo – Suaita, Santander</p>
-    </header>
-
-    <nav>
-      <button onclick="goToMain()">← Volver al Registro Principal</button>
-      <select id="mes-select">
-        <option value="">Seleccione un mes</option>
-        <option value="0">Enero</option>
-        <option value="1">Febrero</option>
-        <option value="2">Marzo</option>
-        <option value="3">Abril</option>
-        <option value="4">Mayo</option>
-        <option value="5">Junio</option>
-        <option value="6">Julio</option>
-        <option value="7">Agosto</option>
-        <option value="8">Septiembre</option>
-        <option value="9">Octubre</option>
-        <option value="10">Noviembre</option>
-        <option value="11">Diciembre</option>
-      </select>
-      <button onclick="descargarExtractoVentas()">📥 Extracto Mensual de Ventas</button>
-      <button onclick="descargarExtractoGastos()">💸 Extracto Mensual de Gastos</button>
-      <button class="btn-top" onclick="clientesTop()">👑 Clientes que Más Compran (más de 4 ventas)</button>
-      <input type="text" id="cliente-input" placeholder="Nombre del cliente" />
-      <button onclick="ventasPorCliente()">🔍 Ventas por Cliente</button>
-    </nav>
-
-    <div class="results" id="resultados">
-      <!-- Resultados dinámicos -->
-    </div>
-
-    <footer>
-      <p>El Portachuelo &copy; 2026 | Sistema de Control Interno</p>
-    </footer>
-  </div>
-
-  <!-- Recibo para PDF -->
-  <div id="receipt-template">
-    <div style="text-align:center;">
-      <div style="width:80px;height:80px;background:url('img/codorniz.jpg');background-size:contain;background-position:center;margin:0 auto 10px;"></div>
-      <h2 style="color:#2E7D32;font-weight:bold;" id="receipt-title">RECIBO DE VENTA</h2>
-      <p style="color:#666;font-size:14px;">El Portachuelo – Suaita, Santander</p>
-      <p id="receipt-factura" style="font-size:18px;color:#4CAF50;font-weight:bold;"></p>
-    </div>
-    <div id="receipt-details" style="margin:20px 0;"></div>
-    <div class="receipt-qr-container" id="receipt-qr"></div>
-    <p style="text-align:center;font-size:10px;color:#888;margin-top:20px;border-top:1px solid #eee;padding-top:10px;">
-      Generado desde Control Interno
-    </p>
-  </div>
-
-  <!-- Librerías externas (corregidas sin espacios) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script>window.jsPDF = window.jspdf.jsPDF;</script>
-
-  <script>
-    // === IndexedDB Manager (solo lectura) ===
-    class DBManager {
-      constructor() { this.db = null; }
-      async init() {
-        if (this.db) return this.db;
-        return new Promise((resolve, reject) => {
-          const req = indexedDB.open('PortachueloDB', 2);
-          req.onerror = () => reject(req.error);
-          req.onsuccess = () => { this.db = req.result; resolve(this.db); };
-          req.onupgradeneeded = () => {};
-        });
-      }
-      async getAllVentas() {
-        await this.init();
-        return new Promise((resolve, reject) => {
-          // ⚠️ Solo lectura: 'readonly'
-          const tx = this.db.transaction(['ventas'], 'readonly');
-          const store = tx.objectStore('ventas');
-          const req = store.getAll();
-          req.onsuccess = () => resolve(req.result);
-          req.onerror = () => reject(req.error);
-        });
-      }
-      async getAllGastos() {
-        await this.init();
-        return new Promise((resolve, reject) => {
-          // ⚠️ Solo lectura: 'readonly'
-          const tx = this.db.transaction(['gastos'], 'readonly');
-          const store = tx.objectStore('gastos');
-          const req = store.getAll();
-          req.onsuccess = () => resolve(req.result);
-          req.onerror = () => reject(req.error);
-        });
-      }
-    }
-
-    const db = new DBManager();
-
-    function formatDate(dateStr) {
-      const d = new Date(dateStr);
-      return d.toLocaleString('es-CO', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      });
-    }
-
-    // ✅ Corregido: sin espacios en la URL
-    function generateQR(text) {
-      const encoded = encodeURIComponent(text);
-      return `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encoded}`;
-    }
-
-    function mostrarTabla(titulo, headers, filas) {
-      let html = `<h3 style="color:#2E7D32;margin-bottom:12px;">${titulo}</h3><table><thead><tr>`;
-      headers.forEach(h => html += `<th>${h}</th>`);
-      html += `</tr></thead><tbody>`;
-      filas.forEach(fila => {
-        html += `<tr>${fila.map(cell => `<td>${cell}</td>`).join('')}</tr>`;
-      });
-      html += `</tbody></table>`;
-      document.getElementById('resultados').innerHTML = html;
-    }
-
-    async function filtrarPorMes(arr, mesIndex) {
-      const now = new Date();
-      const año = now.getFullYear();
-      return arr.filter(item => {
-        const fecha = new Date(item.fechaCompleta);
-        return fecha.getMonth() === mesIndex && fecha.getFullYear() === año;
-      });
-    }
-
-    // === Acciones (solo lectura) ===
-    async function descargarExtractoVentas() {
-      const mes = document.getElementById('mes-select').value;
-      if (mes === '') return alert('Seleccione un mes');
-      const ventas = await db.getAllVentas();
-      const filtradas = await filtrarPorMes(ventas, parseInt(mes));
-      if (filtradas.length === 0) return alert('No hay ventas este mes');
-      const headers = ['Factura', 'Cliente', 'Cubetas', 'Total', 'Fecha'];
-      const filas = filtradas.map(v => [
-        v.factura,
-        v.cliente,
-        v.cubetas,
-        `$${v.total.toLocaleString('es-CO')}`,
-        formatDate(v.fechaCompleta)
-      ]);
-      mostrarTabla(`Ventas – ${new Date(0, mes).toLocaleDateString('es-CO', { month: 'long' })}`, headers, filas);
-      generarPDF('extracto-ventas', headers, filas);
-    }
-
-    async function descargarExtractoGastos() {
-      const mes = document.getElementById('mes-select').value;
-      if (mes === '') return alert('Seleccione un mes');
-      const gastos = await db.getAllGastos();
-      const filtrados = await filtrarPorMes(gastos, parseInt(mes));
-      if (filtrados.length === 0) return alert('No hay gastos este mes');
-      const tipoLabels = { purina: 'Purina', medicamento: 'Medicamento', transporte: 'Transporte', mantenimiento: 'Mant.', otros: 'Otros' };
-      const headers = ['Tipo', 'Descripción', 'Monto', 'Fecha'];
-      const filas = filtrados.map(g => [
-        tipoLabels[g.tipo] || g.tipo,
-        g.descripcion || '-',
-        `$${g.monto.toLocaleString('es-CO')}`,
-        formatDate(g.fechaCompleta)
-      ]);
-      mostrarTabla(`Gastos – ${new Date(0, mes).toLocaleDateString('es-CO', { month: 'long' })}`, headers, filas);
-      generarPDF('extracto-gastos', headers, filas);
-    }
-
-    async function clientesTop() {
-      const ventas = await db.getAllVentas();
-      const conteo = {};
-      ventas.forEach(v => {
-        conteo[v.cliente] = (conteo[v.cliente] || 0) + 1;
-      });
-      const topClientes = Object.entries(conteo)
-        .filter(([_, count]) => count > 4)
-        .sort((a, b) => b[1] - a[1])
-        .map(([cliente, count]) => {
-          const total = ventas
-            .filter(v => v.cliente === cliente)
-            .reduce((sum, v) => sum + v.total, 0);
-          return [cliente, count, `$${total.toLocaleString('es-CO')}`];
-        });
-      if (topClientes.length === 0) return alert('No hay clientes con más de 4 ventas');
-      const headers = ['Cliente', 'N° Ventas', 'Total Comprado ($)'];
-      mostrarTabla('Clientes con más de 4 ventas', headers, topClientes);
-      generarPDF('clientes-top', headers, topClientes);
-    }
-
-    async function ventasPorCliente() {
-      const nombre = document.getElementById('cliente-input').value.trim();
-      if (!nombre) return alert('Ingrese nombre de cliente');
-      const ventas = await db.getAllVentas();
-      const delCliente = ventas.filter(v => v.cliente.toLowerCase().includes(nombre.toLowerCase()));
-      if (delCliente.length === 0) return alert('No se encontraron ventas');
-      const headers = ['Factura', 'Cubetas', 'Total', 'Crédito', 'Fecha'];
-      const filas = delCliente.map(v => [
-        v.factura,
-        v.cubetas,
-        `$${v.total.toLocaleString('es-CO')}`,
-        v.debe ? `$${v.debe.toLocaleString('es-CO')}` : '—',
-        formatDate(v.fechaCompleta)
-      ]);
-      mostrarTabla(`Ventas de: ${nombre}`, headers, filas);
-      generarPDF(`ventas-${nombre}`, headers, filas);
-    }
-
-    // === Generación de PDF con QR al final ===
-    async function generarPDF(nombre, headers, filas) {
-      const template = document.getElementById('receipt-template');
-      const details = document.getElementById('receipt-details');
-      const qrContainer = document.getElementById('receipt-qr');
-
-      let html = `<table style="width:100%;border-collapse:collapse;font-size:12px;">`;
-      html += `<thead><tr style="background:#e8f5e9;">`;
-      headers.forEach(h => html += `<th style="padding:6px;border:1px solid #ddd;">${h}</th>`);
-      html += `</tr></thead><tbody>`;
-      filas.forEach(fila => {
-        html += `<tr>`;
-        fila.forEach(cell => html += `<td style="padding:6px;border:1px solid #ddd;">${cell}</td>`);
-        html += `</tr>`;
-      });
-      html += `</tbody></table>`;
-      details.innerHTML = html;
-      document.getElementById('receipt-factura').textContent = nombre.toUpperCase();
-      document.getElementById('receipt-title').textContent = 'REPORTE GENERADO';
-
-      const qrText = `Reporte: ${nombre}\nGenerado: ${new Date().toLocaleString('es-CO')}\nOrigen: Control Interno`;
-      qrContainer.innerHTML = `<img src="${generateQR(qrText)}" alt="QR" style="width:120px;height:120px;">`;
-
-      template.style.display = 'block';
-      const { jsPDF } = window.jspdf;
-      html2canvas(template).then(canvas => {
-        const imgData = canvas.toDataURL('img/logo.png');
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const imgWidth = 210;
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-        pdf.save(`${nombre}.pdf`);
-        template.style.display = 'none';
-      });
-    }
-
-    function goToMain() {
-      window.location.href = 'index.html';
+      window.location.href = 'pagina2.html';
     }
   </script>
 </body>
