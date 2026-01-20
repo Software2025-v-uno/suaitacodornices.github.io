@@ -842,11 +842,13 @@
       }
     }
 
-    async function generarPDF(nombre, headers, filas) {
+    // Función corregida para generar PDF
+    function generarPDF(nombre, headers, filas) {
       const template = document.getElementById('receipt-template');
       const details = document.getElementById('receipt-details');
       const qrContainer = document.getElementById('receipt-qr');
 
+      // Construir la tabla HTML
       let html = `<table style="width:100%;border-collapse:collapse;font-size:12px;">`;
       html += `<thead><tr style="background:#e8f5e9;">`;
       headers.forEach(h => html += `<th style="padding:6px;border:1px solid #ddd;">${h}</th>`);
@@ -860,6 +862,7 @@
       details.innerHTML = html;
       document.getElementById('receipt-factura').textContent = nombre.toUpperCase();
 
+      // Generar QR
       const qrText = `Reporte: ${nombre}\nGenerado: ${new Date().toLocaleString('es-CO')}\nOrigen: Control Interno`;
       const qrUrl = generateQR(qrText);
       
@@ -871,14 +874,37 @@
         qrContainer.appendChild(qrImage);
         
         template.style.display = 'block';
-        html2canvas(template).then(canvas => {
+        
+        // Usar html2canvas para capturar el template
+        html2canvas(template, {
+          scale: 2,
+          useCORS: true,
+          allowTaint: true
+        }).then(canvas => {
           const imgData = canvas.toDataURL('image/png');
           const pdf = new jsPDF('p', 'mm', 'a4');
           const imgWidth = 210;
+          const pageHeight = 295;
           const imgHeight = (canvas.height * imgWidth) / canvas.width;
-          pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+          let heightLeft = imgHeight;
+          let position = 0;
+
+          pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+          heightLeft -= pageHeight;
+
+          while (heightLeft >= 0) {
+            position = heightLeft - imgHeight;
+            pdf.addPage();
+            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+          }
+
           pdf.save(`${nombre}.pdf`);
           template.style.display = 'none';
+        }).catch(error => {
+          console.error('Error en html2canvas:', error);
+          template.style.display = 'none';
+          showNotification('Error al generar el PDF', 'error');
         });
       };
       
@@ -886,14 +912,36 @@
         console.error('Error al cargar QR');
         qrContainer.innerHTML = '<p style="color:red;">Error QR</p>';
         template.style.display = 'block';
-        html2canvas(template).then(canvas => {
+        
+        html2canvas(template, {
+          scale: 2,
+          useCORS: true,
+          allowTaint: true
+        }).then(canvas => {
           const imgData = canvas.toDataURL('image/png');
           const pdf = new jsPDF('p', 'mm', 'a4');
           const imgWidth = 210;
+          const pageHeight = 295;
           const imgHeight = (canvas.height * imgWidth) / canvas.width;
-          pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+          let heightLeft = imgHeight;
+          let position = 0;
+
+          pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+          heightLeft -= pageHeight;
+
+          while (heightLeft >= 0) {
+            position = heightLeft - imgHeight;
+            pdf.addPage();
+            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+          }
+
           pdf.save(`${nombre}.pdf`);
           template.style.display = 'none';
+        }).catch(error => {
+          console.error('Error en html2canvas sin QR:', error);
+          template.style.display = 'none';
+          showNotification('Error al generar el PDF', 'error');
         });
       };
     }
