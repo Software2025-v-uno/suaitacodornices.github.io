@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subir Archivos a Drive - Finca El Naranjo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #10b981 0%, #34d399 50%, #6ee7b7 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            width: 100%;
+            max-width: 600px;
+            transition: all 0.4s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4);
+        }
+
+        h1 {
+            color: #10b981;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .folder-url-section {
+            margin-bottom: 25px;
+        }
+
+        .folder-url-label {
+            display: block;
+            color: #1f2937;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .folder-url-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: 'Segoe UI', monospace;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+        }
+
+        .folder-url-input:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+        }
+
+        .upload-area {
+            border: 3px dashed #10b981;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            background: #f8fafc;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .upload-area:hover {
+            background: #ecfdf5;
+            border-color: #34d399;
+        }
+
+        .upload-area i {
+            font-size: 48px;
+            color: #10b981;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover i {
+            transform: scale(1.1);
+        }
+
+        .upload-area h3 {
+            color: #1f2937;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .upload-area p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .btn-upload {
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-upload:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6);
+        }
+
+        .btn-upload:active {
+            transform: translateY(0);
+        }
+
+        .btn-upload i {
+            margin-right: 10px;
+        }
+
+        .file-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #ecfdf5;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .file-info.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .file-info h4 {
+            color: #10b981;
+            margin-bottom: 10px;
+        }
+
+        .file-info p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .progress-container {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .progress-container.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #34d399);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 25px 40px;
+            border-radius: 15px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
+            z-index: 1000;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: pulse 0.5s ease;
+            display: none;
+        }
+
+        .notification.show {
+            display: block;
+        }
+
+        .notification.success {
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+        }
+
+        .notification.error {
+            background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+        }
+
+        .notification.warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.3);
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.5);
+            transform: scale(1.1);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.05);
+            }
+        }
+
+        .security-badge {
+            text-align: center;
+            margin-top: 20px;
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        .security-badge i {
+            color: #10b981;
+            margin-right: 5px;
+        }
+
+        .auth-section {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .btn-auth {
+            background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 25px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-auth:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+        }
+
+        .auth-status {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .auth-status.authenticated {
+            color: #10b981;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-cloud-upload-alt"></i> Subir Archivos a Drive</h1>
+        
+        <div class="auth-section">
+            <button class="btn-auth" id="authBtn">
+                <i class="fas fa-key"></i> Conectar con Google Drive
+            </button>
+            <div class="auth-status" id="authStatus">No autenticado</div>
+        </div>
+
+        <div class="folder-url-section">
+            <label class="folder-url-label">Enlace de la carpeta de destino:</label>
+            <input type="text" id="folderUrl" class="folder-url-input" 
+                   value="https://drive.google.com/drive/folders/1V8kpKn5aAd1SP7V4RhRwuH4bEobCc0WR?usp=drive_link"
+                   placeholder="https://drive.google.com/drive/folders/...">
+        </div>
+        
+        <div class="upload-area" id="uploadArea">
+            <i class="fas fa-file-upload"></i>
+            <h3>Arrastra y suelta tus archivos aquí</h3>
+            <p>Imágenes, PDF, DOCX, Excel y más formatos</p>
+            <input type="file" id="fileInput" class="file-input" multiple>
+        </div>
+
+        <button class="btn-upload" id="uploadBtn" disabled>
+            <i class="fas fa-upload"></i> Subir Archivos
+        </button>
+
+        <div class="file-info" id="fileInfo">
+            <h4>Archivos Seleccionados:</h4>
+            <div id="fileList"></div>
+        </div>
+
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-bar">
+                <div class="progress" id="progressBar"></div>
+            </div>
+        </div>
+
+        <div class="security-badge">
+            <i class="fas fa-shield-alt"></i> Autenticación segura con Google OAuth2
+        </div>
+    </div>
+
+    <div class="notification" id="notification">
+        <button class="close-btn" onclick="closeNotification()">&times;</button>
+        <div id="notificationMessage"></div>
+    </div>
+
+    <script>
+        // ===== CONFIGURACIÓN CORRECTA DE GOOGLE API =====
+        const CLIENT_ID ='563039710397-rr5tb3p0282a3svl73r1q7tt1v0ak7ha.apps.googleusercontent.com';
+        const API_KEY='AIzaSyAxwEenar6c-Rdxe61it6qpZZUxggj2OTo'; // ✅ API_KEY CORREGIDA
+        
+        const DISCOVERY_DOC='https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'; // ✅ Sin espacios
+        const SCOPES='https://www.googleapis.com/auth/drive.file'; // ✅ Sin espacios
+
+        // Variables globales
+        let filesToUpload = [];
+        let gapiInitialized = false;
+        let authenticated = false;
+
+        // Elementos DOM
+        const authBtn = document.getElementById('authBtn');
+        const authStatus = document.getElementById('authStatus');
+        const folderUrlInput = document.getElementById('folderUrl');
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileList = document.getElementById('fileList');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressBar = document.getElementById('progressBar');
+        const notification = document.getElementById('notification');
+        const notificationMessage = document.getElementById('notificationMessage');
+
+        // ===== INICIALIZAR GOOGLE API =====
+        function initClient() {
+            gapi.client.init({
+                apiKey: API_KEY,
+                clientId: CLIENT_ID,
+                discoveryDocs: [DISCOVERY_DOC],
+                scope: SCOPES
+            }).then(() => {
+                gapiInitialized = true;
+                updateAuthStatus();
+                gapi.auth2.getAuthInstance().isSignedIn.listen(updateAuthStatus);
+            }, (error) => {
+                console.error('Error al inicializar Google API:', error);
+                showNotification('Error al inicializar Google API. Verifica tu configuración.', 'error');
+            });
+        }
+
+        // ===== ACTUALIZAR ESTADO DE AUTENTICACIÓN =====
+        function updateAuthStatus() {
+            authenticated = gapi.auth2.getAuthInstance().isSignedIn.get();
+            if (authenticated) {
+                authStatus.textContent = '✅ Autenticado con Google Drive';
+                authStatus.className = 'auth-status authenticated';
+                uploadBtn.disabled = false;
+                authBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Desconectar';
+            } else {
+                authStatus.textContent = '❌ No autenticado';
+                authStatus.className = 'auth-status';
+                uploadBtn.disabled = true;
+                authBtn.innerHTML = '<i class="fas fa-key"></i> Conectar con Google Drive';
+            }
+        }
+
+        // ===== MANEJAR AUTENTICACIÓN =====
+        function handleAuthClick() {
+            if (!gapiInitialized) {
+                showNotification('Inicializando Google API...', 'warning');
+                return;
+            }
+
+            if (authenticated) {
+                gapi.auth2.getAuthInstance().signOut();
+            } else {
+                gapi.auth2.getAuthInstance().signIn();
+            }
+        }
+
+        // ===== EVENT LISTENERS =====
+        authBtn.addEventListener('click', handleAuthClick);
+        uploadArea.addEventListener('click', () => fileInput.click());
+        uploadArea.addEventListener('dragover', handleDragOver);
+        uploadArea.addEventListener('dragleave', handleDragLeave);
+        uploadArea.addEventListener('drop', handleDrop);
+        fileInput.addEventListener('change', handleFileSelect);
+        uploadBtn.addEventListener('click', uploadFiles);
+
+        // ===== FUNCIONES DE ARRASTRAR Y SOLTAR =====
+        function handleDragOver(e) {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#34d399';
+            uploadArea.style.backgroundColor = '#d1fae5';
+        }
+
+        function handleDragLeave(e) {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#10b981';
+            uploadArea.style.backgroundColor = '#f8fafc';
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#10b981';
+            uploadArea.style.backgroundColor = '#f8fafc';
+            const files = e.dataTransfer.files;
+            handleFiles(files);
+        }
+
+        // ===== MANEJO DE SELECCIÓN DE ARCHIVOS =====
+        function handleFileSelect(e) {
+            const files = e.target.files;
+            handleFiles(files);
+        }
+
+        function handleFiles(files) {
+            filesToUpload = [];
+            fileList.innerHTML = '';
+
+            if (files.length === 0) {
+                fileInfo.style.display = 'none';
+                return;
+            }
+
+            Array.from(files).forEach(file => {
+                filesToUpload.push(file);
+                addFileToList(file);
+            });
+
+            fileInfo.classList.add('show');
+        }
+
+        // ===== AGREGAR ARCHIVO A LA LISTA =====
+        function addFileToList(file) {
+            const fileItem = document.createElement('p');
+            fileItem.innerHTML = `
+                <i class="fas fa-file"></i> ${file.name} (${formatFileSize(file.size)})
+            `;
+            fileList.appendChild(fileItem);
+        }
+
+        // ===== FORMATEAR TAMAÑO DE ARCHIVO =====
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+
+        // ===== EXTRAER ID DE CARPETA DEL ENLACE =====
+        function extractFolderId(folderUrl) {
+            try {
+                const url = new URL(folderUrl);
+                const pathParts = url.pathname.split('/');
+                const folderIndex = pathParts.indexOf('folders');
+                if (folderIndex !== -1 && folderIndex + 1 < pathParts.length) {
+                    return pathParts[folderIndex + 1].split('?')[0];
+                }
+                return null;
+            } catch (error) {
+                console.error('Error extrayendo ID de carpeta:', error);
+                return null;
+            }
+        }
+
+        // ===== SUBIR ARCHIVOS A GOOGLE DRIVE =====
+        async function uploadFiles() {
+            if (!authenticated) {
+                showNotification('Por favor, autentícate con Google Drive primero', 'warning');
+                return;
+            }
+
+            if (filesToUpload.length === 0) {
+                showNotification('Por favor selecciona archivos para subir', 'warning');
+                return;
+            }
+
+            const folderUrl = folderUrlInput.value.trim();
+            if (!folderUrl) {
+                showNotification('Por favor ingresa el enlace de la carpeta de destino', 'warning');
+                return;
+            }
+
+            const folderId = extractFolderId(folderUrl);
+            if (!folderId) {
+                showNotification('Enlace de carpeta inválido. Por favor verifica el formato.', 'error');
+                return;
+            }
+
+            showNotification('📤 Subiendo archivos...', 'success');
+            progressContainer.classList.add('show');
+            
+            try {
+                for (let i = 0; i < filesToUpload.length; i++) {
+                    const file = filesToUpload[i];
+                    await uploadFileToDrive(file, folderId);
+                    const progress = ((i + 1) / filesToUpload.length) * 100;
+                    progressBar.style.width = `${progress}%`;
+                }
+                
+                showNotification(`✅ ¡${filesToUpload.length} archivo(s) subido(s) exitosamente!`, 'success');
+                resetUploadForm();
+            } catch (error) {
+                console.error('Error al subir archivos:', error);
+                showNotification(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        // ===== SUBIR UN ARCHIVO INDIVIDUAL =====
+        function uploadFileToDrive(file, folderId) {
+            return new Promise((resolve, reject) => {
+                const metadata = {
+                    name: file.name,
+                    parents: [folderId]
+                };
+
+                const accessToken = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token;
+                
+                const formData = new FormData();
+                formData.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+                formData.append('file', file);
+
+                fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id', { // ✅ Sin espacios
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    },
+                    body: formData
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        return response.text().then(text => {
+                            throw new Error(`HTTP ${response.status}: ${text}`);
+                        });
+                    }
+                })
+                .then(data => {
+                    console.log('✅ Archivo subido con ID:', data.id);
+                    resolve(data);
+                })
+                .catch(error => {
+                    console.error('❌ Error en subida:', error);
+                    reject(error);
+                });
+            });
+        }
+
+        // ===== MOSTRAR NOTIFICACIÓN =====
+        function showNotification(message, type = 'success') {
+            notificationMessage.textContent = message;
+            notification.className = `notification ${type} show`;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // ===== CERRAR NOTIFICACIÓN =====
+        function closeNotification() {
+            notification.classList.remove('show');
+        }
+
+        // ===== RESETEAR FORMULARIO =====
+        function resetUploadForm() {
+            filesToUpload = [];
+            fileInput.value = '';
+            fileInfo.classList.remove('show');
+            progressContainer.classList.remove('show');
+            progressBar.style.width = '0%';
+        }
+
+        // ===== CARGAR GOOGLE API =====
+        function loadGoogleAPI() {
+            const script = document.createElement('script');
+            script.src = 'https://apis.google.com/js/api.js'; // ✅ Sin espacios
+            script.onload = () => {
+                gapi.load('client:auth2', initClient);
+            };
+            script.onerror = () => {
+                showNotification('Error al cargar Google API. Verifica tu conexión.', 'error');
+            };
+            document.head.appendChild(script);
+        }
+
+        // ===== INICIALIZAR =====
+        loadGoogleAPI();
+    </script>
+</body>
+</html>

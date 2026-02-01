@@ -1,23 +1,68 @@
 {
-  "name": "El Portachuelo",
-  "short_name": "Portachuelo",
-  "description": "Registro de ventas y gastos - Sin conexión",
+  "name": "El Portachuelo - Sistema Integral de Gestión",
+  "short_name": "El Portachuelo",
+  "description": "Sistema de gestión avícola para control de ventas, gastos, inventario y reportes financieros. Con sincronización en tiempo real con Google Sheets.",
   "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#e8f5e9",
-  "theme_color": "#4CAF50",
+  "theme_color": "#2E7D32",
+  "orientation": "portrait-primary",
+  "categories": ["business", "productivity", "finance", "utilities"],
   "icons": [
     {
-      "src": "img/logo-192.png",
+      "src": "/codorniz.jpg",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "img/logo-512.png",
+      "src": "/codorniz.jpg",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ],
-  "orientation": "portrait",
-  "scope": "/"
+  "screenshots": [
+    {
+      "src": "/codorniz.jpg",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "platform": "wide"
+    },
+    {
+      "src": "/codorniz.jpg",
+      "sizes": "720x1280",
+      "type": "image/png",
+      "platform": "narrow"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Nueva Venta",
+      "short_name": "Venta",
+      "description": "Registrar nueva venta de huevos",
+      "url": "/nuevapagina.html#ventas",
+      "icons": [{ "src": "/codorniz.jpg", "sizes": "192x192" }]
+    },
+    {
+      "name": "Nuevo Gasto",
+      "short_name": "Gasto",
+      "description": "Registrar nuevo gasto operativo",
+      "url": "/nuevapagina.html#gastos",
+      "icons": [{ "src": "/codorniz.jpg", "sizes": "192x192" }]
+    },
+    {
+      "name": "Generar Reporte",
+      "short_name": "Reporte",
+      "description": "Crear reporte financiero completo",
+      "url": "/nuevapagina.html#reporte",
+      "icons": [{ "src": "/codorniz.jpg", "sizes": "192x192" }]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "scope": "/",
+  "id": "/index.html",
+  "lang": "es-CO",
+  "dir": "ltr"
 }

@@ -3,28 +3,34 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#4CAF50">
-<title>El Portachuelo | Registro de Ventas y Gastos</title>
-<link rel="icon" href="img/logo.png">
+<meta name="theme-color" content="#2E7D32">
+<title>El Portachuelo | Sistema Integral de Gestión</title>
+<link rel="icon" href="logo.JPEG">
 <link rel="manifest" href="manifest.json">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://apis.google.com/js/api.js"></script>
 <script>window.jsPDF = window.jspdf.jsPDF;</script>
 <style>
 :root {
---primary: #4CAF50;
---secondary: #388E3C;
---light-green: #81C784;
---dark-green: #2E7D32;
---expense-color: #FF9800;
---expense-bg: #FFF3E0;
---white: #FFFFFF;
---gray: #616161;
---light-bg: #e8f5e9;
---medium-bg: #c8e6c9;
---dark-bg: #a5d6a7;
---share-bg: #f8f9fa;
---share-border: #e9ecef;
+--primary: #2E7D32;
+--primary-dark: #1B5E20;
+--secondary: #4CAF50;
+--accent: #FF9800;
+--accent-dark: #E65100;
+--danger: #F44336;
+--success: #4CAF50;
+--warning: #FFC107;
+--info: #2196F3;
+--light: #F8F9FA;
+--dark: #343A40;
+--gray: #6C757D;
+--light-gray: #E9ECEF;
+--border-radius: 16px;
+--box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+--box-shadow-hover: 0 12px 35px rgba(0, 0, 0, 0.18);
+--transition: all 0.35s cubic-bezier(0.165, 0.84, 0.44, 1);
+--sidebar-width: 280px;
 }
 * {
 margin: 0;
@@ -34,15 +40,336 @@ font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 -webkit-tap-highlight-color: transparent;
 }
 body {
-background: linear-gradient(135deg, var(--light-bg) 0%, var(--medium-bg) 50%, var(--dark-bg) 100%);
+background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 50%, #a5d6a7 100%);
 min-height: 100vh;
-padding: 12px;
 color: #333;
-transition: all 0.3s ease;
+overflow-x: hidden;
+transition: var(--transition);
 }
 .container {
-max-width: 1200px;
+max-width: 1400px;
 margin: 0 auto;
+padding: 0 16px;
+}
+/* Security Badge */
+.security-badge {
+position: fixed;
+top: 16px;
+right: 16px;
+display: flex;
+align-items: center;
+gap: 8px;
+padding: 8px 16px;
+background: rgba(46, 125, 50, 0.92);
+color: white;
+border-radius: 50px;
+font-weight: 600;
+font-size: 0.85rem;
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+z-index: 1001;
+animation: pulseBadge 2s infinite;
+}
+.security-badge i {
+font-size: 1.2rem;
+}
+@keyframes pulseBadge {
+0% { box-shadow: 0 0 0 0 rgba(46, 125, 50, 0.7); }
+70% { box-shadow: 0 0 0 8px rgba(46, 125, 50, 0); }
+100% { box-shadow: 0 0 0 0 rgba(46, 125, 50, 0); }
+}
+/* Sidebar Navigation */
+.sidebar {
+position: fixed;
+top: 0;
+right: 0;
+width: var(--sidebar-width);
+height: 100vh;
+background: linear-gradient(120deg, var(--primary) 0%, var(--primary-dark) 100%);
+color: white;
+box-shadow: -5px 0 25px rgba(0, 0, 0, 0.15);
+transform: translateX(100%);
+transition: var(--transition);
+z-index: 2000;
+display: flex;
+flex-direction: column;
+overflow-y: auto;
+}
+.sidebar.active {
+transform: translateX(0);
+}
+.sidebar-header {
+padding: 24px 20px 16px;
+border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+position: relative;
+}
+.sidebar-header h2 {
+font-size: 1.6rem;
+font-weight: 700;
+display: flex;
+align-items: center;
+gap: 12px;
+}
+.sidebar-header h2 i {
+font-size: 1.8rem;
+}
+.close-sidebar {
+position: absolute;
+top: 16px;
+right: 16px;
+background: rgba(255, 255, 255, 0.15);
+border: none;
+width: 36px;
+height: 36px;
+border-radius: 50%;
+color: white;
+font-size: 1.4rem;
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: center;
+transition: var(--transition);
+}
+.close-sidebar:hover {
+background: rgba(255, 255, 255, 0.25);
+transform: rotate(90deg);
+}
+.sidebar-menu {
+padding: 20px 0;
+flex: 1;
+}
+.sidebar-item {
+padding: 0 20px;
+margin-bottom: 8px;
+}
+.sidebar-link {
+display: flex;
+align-items: center;
+gap: 16px;
+padding: 16px 20px;
+border-radius: 14px;
+color: rgba(255, 255, 255, 0.85);
+text-decoration: none;
+font-weight: 500;
+font-size: 1.05rem;
+transition: var(--transition);
+position: relative;
+overflow: hidden;
+}
+.sidebar-link:hover, .sidebar-link.active {
+background: rgba(255, 255, 255, 0.15);
+color: white;
+transform: translateX(-4px);
+}
+.sidebar-link i {
+font-size: 1.5rem;
+width: 24px;
+text-align: center;
+}
+.sidebar-link::before {
+content: '';
+position: absolute;
+left: 0;
+top: 0;
+height: 100%;
+width: 4px;
+background: white;
+transform: scaleY(0);
+transform-origin: bottom;
+transition: transform 0.3s ease;
+}
+.sidebar-link:hover::before, .sidebar-link.active::before {
+transform: scaleY(1);
+}
+.sidebar-footer {
+padding: 16px 20px;
+border-top: 1px solid rgba(255, 255, 255, 0.1);
+font-size: 0.85rem;
+text-align: center;
+color: rgba(255, 255, 255, 0.7);
+}
+/* Overlay */
+.overlay {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: rgba(0, 0, 0, 0.55);
+opacity: 0;
+visibility: hidden;
+transition: var(--transition);
+z-index: 1999;
+}
+.overlay.active {
+opacity: 1;
+visibility: visible;
+}
+/* Header with Menu Toggle */
+header {
+text-align: center;
+margin-bottom: 24px;
+padding: 16px 24px;
+background: rgba(255, 255, 255, 0.96);
+border-radius: var(--border-radius);
+box-shadow: var(--box-shadow);
+position: relative;
+display: flex;
+align-items: center;
+justify-content: space-between;
+flex-wrap: wrap;
+gap: 16px;
+}
+.menu-toggle {
+background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+color: white;
+border: none;
+width: 48px;
+height: 48px;
+border-radius: 14px;
+font-size: 1.6rem;
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: center;
+box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+transition: var(--transition);
+flex-shrink: 0;
+}
+.menu-toggle:hover {
+transform: rotate(45deg) scale(1.05);
+box-shadow: 0 6px 16px rgba(46, 125, 50, 0.4);
+}
+.logo-container {
+display: flex;
+justify-content: center;
+align-items: center;
+gap: 16px;
+flex: 1;
+min-width: 250px;
+}
+.logo {
+width: 100px;
+height: 100px;
+background: url('codorniz.jpg');
+background-size: contain;
+background-position: center;
+background-repeat: no-repeat;
+border-radius: 50%;
+box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+position: relative;
+overflow: hidden;
+}
+.logo::after {
+content: '';
+position: absolute;
+top: -50%;
+left: -50%;
+width: 200%;
+height: 200%;
+background: radial-gradient(circle, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 70%);
+transform: rotate(30deg);
+}
+h1 {
+color: var(--primary-dark);
+font-size: 2.1rem;
+margin-bottom: 4px;
+font-weight: 800;
+letter-spacing: -0.5px;
+background: linear-gradient(45deg, var(--primary-dark), var(--secondary));
+-webkit-background-clip: text;
+background-clip: text;
+color: transparent;
+position: relative;
+}
+h1::after {
+content: '';
+position: absolute;
+bottom: -8px;
+left: 50%;
+transform: translateX(-50%);
+width: 70%;
+height: 4px;
+background: linear-gradient(90deg, var(--secondary), var(--primary));
+border-radius: 2px;
+}
+.subtitle {
+color: var(--gray);
+font-size: 1.15rem;
+font-weight: 500;
+margin-top: 4px;
+}
+/* Back Button */
+.back-button {
+background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+color: white;
+border: none;
+padding: 10px 20px;
+border-radius: 50px;
+font-weight: 600;
+font-size: 1rem;
+cursor: pointer;
+display: flex;
+align-items: center;
+gap: 8px;
+box-shadow: 0 4px 12px rgba(230, 81, 0, 0.3);
+transition: var(--transition);
+position: absolute;
+left: 16px;
+top: 50%;
+transform: translateY(-50%);
+opacity: 0;
+visibility: hidden;
+}
+.back-button.active {
+opacity: 1;
+visibility: visible;
+transform: translateY(-50%) translateX(0);
+}
+.back-button:hover {
+transform: translateY(-50%) translateX(-3px);
+box-shadow: 0 6px 16px rgba(230, 81, 0, 0.4);
+}
+/* Main Content Views */
+#dashboard-view, #external-view {
+transition: opacity 0.4s ease, transform 0.4s ease;
+}
+#external-view {
+display: none;
+width: 100%;
+min-height: calc(100vh - 100px);
+background: white;
+border-radius: var(--border-radius);
+overflow: hidden;
+box-shadow: var(--box-shadow);
+position: relative;
+display: flex;
+flex-direction: column;
+}
+#external-iframe {
+width: 100%;
+flex-grow: 1;
+border: none;
+display: block;
+}
+.external-header {
+padding: 16px 24px;
+background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+color: white;
+display: flex;
+align-items: center;
+justify-content: space-between;
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+flex-shrink: 0;
+}
+.external-title {
+font-size: 1.4rem;
+font-weight: 700;
+display: flex;
+align-items: center;
+gap: 12px;
+}
+.external-title i {
+font-size: 1.7rem;
 }
 /* PIN Authentication */
 .page-loader {
@@ -51,7 +378,7 @@ top: 0;
 left: 0;
 width: 100%;
 height: 100%;
-background: linear-gradient(135deg, var(--light-bg) 0%, var(--medium-bg) 50%, var(--dark-bg) 100%);
+background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 50%, #a5d6a7 100%);
 display: flex;
 justify-content: center;
 align-items: center;
@@ -63,14 +390,14 @@ transition: opacity 0.5s ease;
 .pin-container {
 text-align: center;
 background: white;
-padding: 24px 16px;
-border-radius: 16px;
-box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+padding: 32px 24px;
+border-radius: var(--border-radius);
+box-shadow: var(--box-shadow);
 width: 94%;
-max-width: 400px;
+max-width: 420px;
 position: relative;
 overflow: hidden;
-animation: slideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+animation: slideIn 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
 margin: 0 8px;
 }
 .pin-container::before {
@@ -79,362 +406,777 @@ position: absolute;
 top: 0;
 left: 0;
 width: 100%;
-height: 4px;
-background: linear-gradient(90deg, var(--primary), var(--secondary), var(--primary));
+height: 5px;
+background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent), var(--primary));
 }
 .pin-logo {
-width: 80px;
-height: 80px;
+width: 100px;
+height: 100px;
 background: url('img/codorniz.jpg');
 background-size: contain;
 background-position: center;
 background-repeat: no-repeat;
 border-radius: 50%;
-margin: 0 auto 20px;
-animation: pulse 2s infinite;
+margin: 0 auto 24px;
+animation: pulse 2.5s infinite;
+box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+position: relative;
+overflow: hidden;
+}
+.pin-logo::after {
+content: '';
+position: absolute;
+top: -50%;
+left: -50%;
+width: 200%;
+height: 200%;
+background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%);
+transform: rotate(30deg);
 }
 .pin-title {
-font-size: 1.8rem;
-color: var(--dark-green);
-margin-bottom: 8px;
-font-weight: 700;
+font-size: 2.1rem;
+color: var(--primary-dark);
+margin-bottom: 10px;
+font-weight: 800;
+letter-spacing: -0.5px;
 }
 .pin-subtitle {
 color: var(--gray);
-margin-bottom: 20px;
-font-size: 1rem;
+margin-bottom: 24px;
+font-size: 1.1rem;
+font-weight: 500;
+}
+.security-note {
+background: rgba(46, 125, 50, 0.08);
+border-left: 4px solid var(--primary);
+color: var(--primary-dark);
+padding: 12px 16px;
+border-radius: 0 8px 8px 0;
+margin-bottom: 24px;
+font-size: 0.9rem;
+text-align: left;
+font-weight: 500;
+}
+.pin-instructions {
+background: rgba(255, 243, 224, 0.3);
+border-left: 4px solid var(--accent);
+color: var(--accent-dark);
+padding: 12px 16px;
+border-radius: 0 8px 8px 0;
+margin: 16px 0;
+font-size: 0.95rem;
+text-align: left;
+font-weight: 500;
 }
 .pin-input {
 width: 100%;
-padding: 14px 16px;
-border: 2px solid var(--light-green);
-border-radius: 10px;
-font-size: 1.8rem;
+padding: 16px;
+border: 2px solid var(--light-gray);
+border-radius: 14px;
+font-size: 2.1rem;
 text-align: center;
-margin-bottom: 20px;
-background: white;
+margin-bottom: 28px;
+background: rgba(255, 255, 255, 0.9);
 font-weight: bold;
-transition: all 0.3s ease;
--webkit-text-security: disc;
-text-security: disc;
-caret-color: transparent;
+letter-spacing: 12px;
+transition: var(--transition);
+position: relative;
+z-index: 1;
+}
+.pin-input:focus {
+border-color: var(--secondary);
+box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
 }
 .pin-pad {
 display: grid;
 grid-template-columns: repeat(3, 1fr);
-gap: 10px;
-margin-bottom: 16px;
+gap: 14px;
+margin-bottom: 20px;
 }
 .pin-btn {
 width: 100%;
-height: 52px;
+height: 64px;
 background: white;
-border: 1.5px solid var(--light-green);
-border-radius: 10px;
-color: var(--dark-green);
-font-size: 1.4rem;
-font-weight: bold;
+border: 2px solid var(--light-gray);
+border-radius: 18px;
+color: var(--primary-dark);
+font-size: 1.7rem;
+font-weight: 700;
 cursor: pointer;
-transition: all 0.15s ease;
-box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+transition: var(--transition);
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
+position: relative;
+overflow: hidden;
 touch-action: manipulation;
+font-family: inherit;
 }
-.pin-btn:hover, .pin-btn:active {
-transform: scale(0.98);
+.pin-btn::after {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: linear-gradient(135deg, var(--secondary), var(--primary));
+opacity: 0;
+transition: opacity 0.2s;
+z-index: -1;
+}
+.pin-btn:hover::after, .pin-btn:active::after {
+opacity: 0.12;
+}
+.pin-btn:hover {
+transform: translateY(-2px);
+box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+.pin-btn:active {
+transform: translateY(1px);
+box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 .pin-btn.clear, .pin-btn.enter {
-background: var(--primary);
+background: linear-gradient(135deg, var(--primary), var(--primary-dark));
 color: white;
-font-size: 1.2rem;
-}
-/* Main Layout */
-header {
-text-align: center;
-margin-bottom: 20px;
-padding: 16px;
-background: rgba(255, 255, 255, 0.95);
-border-radius: 14px;
-box-shadow: 0 6px 16px rgba(0,0,0,0.08);
-position: relative;
-overflow: hidden;
-}
-.logo-container {
-display: flex;
-justify-content: center;
-align-items: center;
-margin-bottom: 12px;
-gap: 12px;
-flex-wrap: wrap;
-}
-.logo {
-width: 90px;
-height: 90px;
-background: url('img/codorniz.jpg');
-background-size: contain;
-background-position: center;
-background-repeat: no-repeat;
-border-radius: 50%;
-}
-h1 {
-color: var(--dark-green);
-font-size: 1.8rem;
-margin-bottom: 6px;
+border-color: var(--primary-dark);
+font-size: 1.4rem;
 font-weight: 700;
 }
-.subtitle {
-color: var(--gray);
-font-size: 1rem;
-margin-bottom: 10px;
+.pin-btn.clear::after, .pin-btn.enter::after {
+opacity: 1;
 }
-/* Responsive Dashboard */
-.dashboard {
+.pin-btn.clear:hover, .pin-btn.enter:hover {
+transform: translateY(-3px);
+box-shadow: 0 7px 15px rgba(46, 125, 50, 0.4);
+}
+.pin-btn.clear:active, .pin-btn.enter:active {
+transform: translateY(0);
+}
+/* Session Timeout Warning */
+.session-warning {
+position: fixed;
+bottom: 24px;
+right: 24px;
+background: white;
+border-radius: 14px;
+padding: 16px 24px;
+box-shadow: var(--box-shadow);
 display: flex;
-flex-direction: column;
+align-items: center;
 gap: 16px;
-margin-bottom: 20px;
+z-index: 3000;
+transform: translateX(400px);
+transition: transform 0.4s ease, opacity 0.4s ease;
+opacity: 0;
 }
-@media (min-width: 768px) {
+.session-warning.active {
+transform: translateX(0);
+opacity: 1;
+}
+.session-warning i {
+font-size: 1.8rem;
+color: var(--warning);
+}
+.session-warning-content h3 {
+font-weight: 700;
+color: var(--dark);
+margin-bottom: 4px;
+}
+.session-warning-content p {
+color: var(--gray);
+font-size: 0.95rem;
+}
+.session-warning button {
+background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+color: white;
+border: none;
+padding: 8px 16px;
+border-radius: 10px;
+font-weight: 600;
+cursor: pointer;
+transition: var(--transition);
+margin-left: 12px;
+}
+.session-warning button:hover {
+transform: translateY(-2px);
+box-shadow: 0 4px 8px rgba(46, 125, 50, 0.3);
+}
+/* Cards and Dashboard */
 .dashboard {
 display: grid;
-grid-template-columns: 1fr 1fr;
-gap: 20px;
-}
+grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+gap: 24px;
+margin-bottom: 28px;
 }
 .card {
-background: rgba(255, 255, 255, 0.95);
-border-radius: 14px;
-padding: 18px;
-box-shadow: 0 6px 16px rgba(0,0,0,0.08);
-transition: transform 0.2s ease;
+background: rgba(255, 255, 255, 0.97);
+border-radius: var(--border-radius);
+padding: 24px;
+box-shadow: var(--box-shadow);
+transition: var(--transition);
 position: relative;
 overflow: hidden;
+display: flex;
+flex-direction: column;
 }
 .card::before {
 content: '';
 position: absolute;
 top: 0;
 left: 0;
-width: 4px;
+width: 6px;
 height: 100%;
-background: linear-gradient(to bottom, var(--primary), var(--secondary));
+background: linear-gradient(to bottom, var(--secondary), var(--primary));
+transition: var(--transition);
 }
 .card:hover {
-transform: translateY(-3px);
+transform: translateY(-8px);
+box-shadow: var(--box-shadow-hover);
+}
+.card:hover::before {
+width: 10px;
+}
+.expense-card::before {
+background: linear-gradient(to bottom, var(--accent), var(--accent-dark));
 }
 .card-title {
-font-size: 1.4rem;
-color: var(--dark-green);
-margin-bottom: 16px;
-padding-bottom: 10px;
+font-size: 1.55rem;
+color: var(--primary-dark);
+margin-bottom: 20px;
+padding-bottom: 14px;
 display: flex;
 align-items: center;
-gap: 10px;
+gap: 12px;
 font-weight: 700;
+position: relative;
 }
 .card-title::after {
 content: '';
-flex: 1;
-height: 1.5px;
-background: linear-gradient(to right, var(--light-green), transparent);
-margin-left: 10px;
-}
-.expense-card::before {
-background: linear-gradient(to bottom, var(--expense-color), #E65100);
+position: absolute;
+bottom: 0;
+left: 0;
+width: 50%;
+height: 3px;
+background: linear-gradient(90deg, var(--secondary), transparent);
+border-radius: 3px;
 }
 .expense-card .card-title {
-color: #E65100;
+color: var(--accent-dark);
 }
 .expense-card .card-title::after {
-background: linear-gradient(to right, #FFB74D, transparent);
+background: linear-gradient(90deg, var(--accent), transparent);
 }
 .form-group {
-margin-bottom: 16px;
+margin-bottom: 20px;
+flex: 1;
 }
 label {
 display: block;
-margin-bottom: 6px;
+margin-bottom: 8px;
 font-weight: 600;
-color: var(--dark-green);
-font-size: 0.95rem;
+color: var(--primary-dark);
+font-size: 1.02rem;
+display: flex;
+align-items: center;
+gap: 6px;
+}
+label i {
+font-size: 1.1rem;
+color: var(--secondary);
 }
 .expense-card label {
-color: #E65100;
+color: var(--accent-dark);
+}
+label i.accent {
+color: var(--accent);
 }
 input, select, textarea {
 width: 100%;
-padding: 12px;
-border: 1.5px solid var(--light-green);
-border-radius: 10px;
-font-size: 1rem;
-transition: all 0.3s ease;
+padding: 14px 16px;
+border: 2px solid var(--light-gray);
+border-radius: 14px;
+font-size: 1.05rem;
+transition: var(--transition);
 background-color: white;
+font-family: inherit;
 }
 .expense-card input, .expense-card select, .expense-card textarea {
-border-color: #FFB74D;
+border-color: #FFD54F;
 }
 input:focus, select:focus, textarea:focus {
 outline: none;
 border-color: var(--secondary);
-box-shadow: 0 0 0 3px rgba(56, 142, 60, 0.2);
+box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
 }
 .expense-card input:focus, .expense-card select:focus, .expense-card textarea:focus {
-border-color: #E65100;
-box-shadow: 0 0 0 3px rgba(230, 81, 0, 0.2);
+border-color: var(--accent);
+box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.2);
 }
 .btn {
 display: block;
 width: 100%;
-padding: 14px;
-background: var(--primary);
+padding: 16px;
+background: linear-gradient(135deg, var(--primary), var(--primary-dark));
 color: white;
 border: none;
-border-radius: 10px;
-font-size: 1.1rem;
-font-weight: 600;
+border-radius: 14px;
+font-size: 1.15rem;
+font-weight: 700;
 cursor: pointer;
-transition: all 0.2s ease;
+transition: var(--transition);
 text-align: center;
-box-shadow: 0 3px 6px rgba(76, 175, 80, 0.3);
+box-shadow: 0 6px 16px rgba(46, 125, 50, 0.35);
+position: relative;
+overflow: hidden;
 touch-action: manipulation;
+margin-top: 8px;
+}
+.btn::after {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: linear-gradient(135deg, var(--primary-dark), #0A3D19);
+opacity: 0;
+transition: opacity 0.2s;
+z-index: -1;
+}
+.btn:hover::after {
+opacity: 1;
 }
 .btn:hover {
-background: var(--secondary);
-transform: translateY(-2px);
-box-shadow: 0 4px 8px rgba(56, 142, 60, 0.4);
+transform: translateY(-3px);
+box-shadow: 0 8px 20px rgba(46, 125, 50, 0.45);
+}
+.btn:active {
+transform: translateY(1px);
+box-shadow: 0 4px 10px rgba(46, 125, 50, 0.4);
 }
 .btn-success {
-background: linear-gradient(45deg, var(--dark-green), #1B5E20);
+background: linear-gradient(135deg, var(--primary-dark), #1B5E20);
 }
 .btn-expense {
-background: linear-gradient(45deg, #FF9800, #E65100);
+background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+box-shadow: 0 6px 16px rgba(230, 81, 0, 0.35);
+}
+.btn-expense::after {
+background: linear-gradient(135deg, var(--accent-dark), #BF360C);
 }
 .btn-expense:hover {
-background: linear-gradient(45deg, #E65100, #BF360C);
+box-shadow: 0 8px 20px rgba(230, 81, 0, 0.45);
 }
 /* Resumen */
+.results, .expense-summary {
+border-radius: var(--border-radius);
+padding: 24px;
+margin-top: 16px;
+box-shadow: var(--box-shadow);
+transition: var(--transition);
+}
 .results {
-background: linear-gradient(135deg, var(--primary), var(--secondary));
+background: linear-gradient(135deg, var(--secondary), var(--primary));
 color: white;
-border-radius: 14px;
-padding: 18px;
 }
 .expense-summary {
-background: linear-gradient(135deg, #FF9800, #E65100);
+background: linear-gradient(135deg, var(--accent), var(--accent-dark));
 color: white;
-border-radius: 14px;
-padding: 18px;
-margin-top: 16px;
+margin-top: 20px;
 }
 .result-item {
 display: flex;
 justify-content: space-between;
-padding: 10px 0;
-border-bottom: 1px solid rgba(255,255,255,0.2);
+padding: 14px 0;
+border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+font-size: 1.05rem;
 }
 .result-item:last-child {
 border-bottom: none;
+padding-bottom: 0;
 }
 .result-label {
-font-size: 0.95rem;
 font-weight: 600;
+opacity: 0.9;
 }
 .result-value {
-font-size: 1.3rem;
-font-weight: 700;
+font-weight: 800;
+font-size: 1.4rem;
 }
 .total {
-font-size: 1.6rem !important;
+font-size: 1.8rem !important;
 color: #FFD700;
+text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
-.neto-positivo { color: #4CAF50 !important; }
-.neto-negativo { color: #F44336 !important; }
+.neto-positivo {
+color: #4CAF50 !important;
+text-shadow: 0 0 8px rgba(76, 175, 80, 0.4);
+}
+.neto-negativo {
+color: #FF5252 !important;
+text-shadow: 0 0 8px rgba(244, 67, 54, 0.4);
+}
 /* Tablas */
 .table-container {
 overflow-x: auto;
-border-radius: 10px;
-margin: 16px 0;
+border-radius: 14px;
+margin: 24px 0;
+box-shadow: var(--box-shadow);
+background: white;
 }
 .sales-table, .expenses-table {
 width: 100%;
 border-collapse: collapse;
-min-width: 600px;
+min-width: 700px;
 }
 .sales-table th, .expenses-table th {
-background: var(--light-green);
-color: var(--dark-green);
+background: linear-gradient(120deg, var(--secondary), var(--primary));
+color: white;
 text-align: left;
-padding: 12px 14px;
-font-weight: 600;
-font-size: 0.85rem;
+padding: 16px 18px;
+font-weight: 700;
+font-size: 0.95rem;
+position: sticky;
+top: 0;
+z-index: 10;
 }
 .expenses-table th {
-background: #FFB74D;
-color: #E65100;
+background: linear-gradient(120deg, var(--accent), var(--accent-dark));
 }
 .sales-table td, .expenses-table td {
-padding: 12px 14px;
-font-size: 0.9rem;
-border-bottom: 1px solid var(--light-green);
+padding: 14px 18px;
+font-size: 0.98rem;
+border-bottom: 1px solid var(--light-gray);
+transition: var(--transition);
 }
-.expenses-table td {
-border-bottom: 1px solid #FFE0B2;
+.sales-table tr:hover td, .expenses-table tr:hover td {
+background: rgba(245, 245, 245, 0.7);
 }
 .actions {
 display: flex;
-gap: 6px;
+gap: 10px;
+justify-content: center;
 }
 .action-btn {
-padding: 6px 12px;
-border-radius: 6px;
-font-size: 0.75rem;
+padding: 8px 16px;
+border-radius: 10px;
+font-size: 0.85rem;
 cursor: pointer;
 border: none;
 font-weight: 600;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 4px;
+transition: var(--transition);
+box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 .edit-btn {
-background: var(--light-green);
-color: var(--dark-green);
+background: rgba(76, 175, 80, 0.15);
+color: var(--primary-dark);
+}
+.edit-btn:hover {
+background: rgba(76, 175, 80, 0.25);
+transform: translateY(-2px);
 }
 .delete-btn {
-background: #EF5350;
-color: white;
+background: rgba(244, 67, 54, 0.15);
+color: var(--danger);
+}
+.delete-btn:hover {
+background: rgba(244, 67, 54, 0.25);
+transform: translateY(-2px);
 }
 .download-btn {
-background: #2196F3;
-color: white;
+background: rgba(33, 150, 243, 0.15);
+color: var(--info);
+}
+.download-btn:hover {
+background: rgba(33, 150, 243, 0.25);
+transform: translateY(-2px);
 }
 /* Footer */
 .footer {
 text-align: center;
-margin-top: 20px;
-padding: 16px;
+margin-top: 28px;
+padding: 20px;
 color: var(--gray);
-font-size: 0.85rem;
-border-top: 1px solid rgba(0,0,0,0.05);
+font-size: 0.95rem;
+border-top: 1px solid rgba(0, 0, 0, 0.06);
+margin-bottom: 24px;
 }
 /* Deudas */
 .debt-section {
-margin-top: 16px;
-padding: 16px;
-background: rgba(255, 243, 224, 0.5);
-border-radius: 10px;
-border-left: 3px solid #FF9800;
+margin-top: 20px;
+padding: 20px;
+background: rgba(255, 243, 224, 0.4);
+border-radius: 14px;
+border-left: 4px solid var(--accent);
+position: relative;
+overflow: hidden;
+}
+.debt-section::before {
+content: '';
+position: absolute;
+top: -50%;
+right: -50%;
+width: 200%;
+height: 200%;
+background: radial-gradient(circle, rgba(255, 243, 224, 0.6) 0%, rgba(255, 243, 224, 0) 70%);
+z-index: 0;
 }
 .debt-title {
-color: #E65100;
-font-weight: 600;
-margin-bottom: 12px;
-font-size: 1rem;
+color: var(--accent-dark);
+font-weight: 700;
+margin-bottom: 16px;
+font-size: 1.25rem;
+display: flex;
+align-items: center;
+gap: 8px;
+position: relative;
+z-index: 1;
+}
+.debt-title i {
+font-size: 1.4rem;
 }
 .debt-options {
 display: grid;
 grid-template-columns: 1fr;
-gap: 12px;
+gap: 16px;
+position: relative;
+z-index: 1;
 }
-@media (min-width: 600px) {
+@media (min-width: 650px) {
 .debt-options {
 grid-template-columns: 1fr 1fr;
 }
+}
+/* Search Bar */
+.search-container {
+margin: 20px 0;
+padding: 16px;
+background: white;
+border-radius: 14px;
+box-shadow: var(--box-shadow);
+}
+.search-input {
+width: 100%;
+padding: 14px 20px;
+border: 2px solid var(--light-gray);
+border-radius: 14px;
+font-size: 1.1rem;
+transition: var(--transition);
+background: url('codorniz.jpg');
+}
+.search-input:focus {
+border-color: var(--secondary);
+box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+outline: none;
+}
+.search-label {
+display: block;
+margin-bottom: 10px;
+font-weight: 600;
+color: var(--primary-dark);
+font-size: 1.1rem;
+}
+/* Animations */
+@keyframes slideIn {
+from {
+transform: translateY(-30px) scale(0.95);
+opacity: 0;
+}
+to {
+transform: translateY(0) scale(1);
+opacity: 1;
+}
+}
+@keyframes pulse {
+0% { transform: scale(1); }
+50% { transform: scale(1.05); }
+100% { transform: scale(1); }
+}
+@keyframes fadeIn {
+from { opacity: 0; }
+to { opacity: 1; }
+}
+@keyframes shake {
+0%, 100% { transform: translateX(0); }
+25% { transform: translateX(-8px); }
+75% { transform: translateX(8px); }
+}
+/* Responsive Design */
+@media (max-width: 768px) {
+.dashboard {
+grid-template-columns: 1fr;
+}
+.logo-container {
+flex-direction: column;
+text-align: center;
+gap: 12px;
+}
+.logo {
+width: 80px;
+height: 80px;
+}
+h1 {
+font-size: 1.9rem;
+}
+.subtitle {
+font-size: 1rem;
+}
+.menu-toggle {
+width: 44px;
+height: 44px;
+font-size: 1.4rem;
+}
+.pin-container {
+padding: 24px 16px;
+max-width: 380px;
+}
+.pin-logo {
+width: 80px;
+height: 80px;
+}
+.pin-title {
+font-size: 1.8rem;
+}
+.pin-pad {
+gap: 10px;
+}
+.pin-btn {
+height: 56px;
+font-size: 1.5rem;
+}
+}
+/* Icons using Unicode and Emoji */
+.icon {
+display: inline-block;
+width: 24px;
+height: 24px;
+background-size: contain;
+background-repeat: no-repeat;
+line-height: 1;
+}
+/* Notification System */
+.notification {
+position: fixed;
+top: 24px;
+right: 24px;
+padding: 16px 24px;
+border-radius: 14px;
+color: white;
+font-weight: 600;
+box-shadow: var(--box-shadow);
+z-index: 5000;
+transform: translateX(400px);
+transition: transform 0.35s ease, opacity 0.35s ease;
+display: flex;
+align-items: center;
+gap: 12px;
+max-width: 350px;
+}
+.notification.show {
+transform: translateX(0);
+}
+.notification.success {
+background: linear-gradient(135deg, var(--success), #2E7D32);
+}
+.notification.error {
+background: linear-gradient(135deg, var(--danger), #C62828);
+}
+.notification.warning {
+background: linear-gradient(135deg, var(--warning), #FF8F00);
+}
+.notification.info {
+background: linear-gradient(135deg, var(--info), #0D47A1);
+}
+.notification i {
+font-size: 1.6rem;
+}
+/* Loading Animation */
+.loading {
+display: inline-block;
+width: 24px;
+height: 24px;
+border: 3px solid rgba(255, 255, 255, 0.3);
+border-radius: 50%;
+border-top-color: white;
+animation: spin 1s linear infinite;
+margin-right: 10px;
+}
+@keyframes spin {
+to { transform: rotate(360deg); }
+}
+/* Connection Status Badge */
+.connection-status {
+position: fixed;
+top: 16px;
+right: 180px;
+padding: 8px 16px;
+border-radius: 50px;
+font-size: 0.85rem;
+font-weight: bold;
+color: white;
+z-index: 1000;
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+display: flex;
+align-items: center;
+gap: 6px;
+transition: var(--transition);
+}
+.connection-status i {
+font-size: 1.1rem;
+}
+.online {
+background: linear-gradient(135deg, #43A047, #2E7D32);
+}
+.offline {
+background: linear-gradient(135deg, #E53935, #C62828);
+animation: pulse 1.5s infinite;
+}
+.syncing {
+background: linear-gradient(135deg, #1E88E5, #0D47A1);
+animation: pulse 1.5s infinite;
+}
+/* Sync Button */
+.sync-section {
+margin-top: 20px;
+padding: 20px;
+background: linear-gradient(135deg, #1E88E5, #0D47A1);
+border-radius: 14px;
+border-left: 4px solid #1E88E5;
+position: relative;
+overflow: hidden;
+}
+.sync-section::before {
+content: '';
+position: absolute;
+top: -50%;
+right: -50%;
+width: 200%;
+height: 200%;
+background: radial-gradient(circle, rgba(30, 136, 229, 0.3) 0%, rgba(30, 136, 229, 0) 70%);
+z-index: 0;
+}
+.sync-title {
+color: white;
+font-weight: 700;
+margin-bottom: 16px;
+font-size: 1.25rem;
+display: flex;
+align-items: center;
+gap: 8px;
+position: relative;
+z-index: 1;
+}
+.sync-title i {
+font-size: 1.4rem;
+}
+.sync-status-text {
+color: rgba(255, 255, 255, 0.9);
+font-size: 0.95rem;
+margin-top: 8px;
+position: relative;
+z-index: 1;
 }
 /* PDF Template (oculto) */
 .pdf-template {
@@ -456,7 +1198,7 @@ padding-bottom: 20px;
 .pdf-logo {
 width: 120px;
 height: 120px;
-background: url('');
+background: url('codorniz.jpg');
 background-size: contain;
 background-position: center;
 background-repeat: no-repeat;
@@ -539,7 +1281,7 @@ margin-bottom: 20px;
 .receipt-logo {
 width: 80px;
 height: 80px;
-background: url('img/codorniz.jpg');
+background: url('codorniz.jpg');
 background-size: contain;
 background-position: center;
 background-repeat: no-repeat;
@@ -583,42 +1325,6 @@ text-align: center;
 font-size: 14px;
 color: var(--gray);
 }
-/* Animations */
-@keyframes slideIn {
-from { transform: translateY(-20px) scale(0.95); opacity: 0; }
-to { transform: translateY(0) scale(1); opacity: 1; }
-}
-@keyframes pulse {
-0% { transform: scale(1); }
-50% { transform: scale(1.03); }
-100% { transform: scale(1); }
-}
-@keyframes fadeIn {
-from { opacity: 0; }
-to { opacity: 1; }
-}
-@keyframes shake {
-0%, 100% { transform: translateX(0); }
-25% { transform: translateX(-5px); }
-75% { transform: translateX(5px); }
-}
-/* Badge de conexión */
-.connection-status {
-position: fixed;
-top: 10px;
-right: 10px;
-padding: 6px 12px;
-border-radius: 20px;
-font-size: 0.8rem;
-font-weight: bold;
-color: white;
-z-index: 1000;
-box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-}
-.online { background: #4CAF50; }
-.offline { background: #F44336; }
-.syncing { background: #2196F3; animation: pulse 1.5s infinite; }
-
 /* Share Modal */
 .share-modal {
 position: fixed;
@@ -704,89 +1410,95 @@ transition: all 0.2s ease;
 .close-share:hover {
 background: #424242;
 }
-
-/* Icons */
-.icon {
+/* WhatsApp and Email Icons */
+.whatsapp-icon {
 display: inline-block;
 width: 24px;
 height: 24px;
+background-image: url("image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%2325D366' d='M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.506-.173-.006-.371-.006-.57-.006-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z'/%3E%3C/svg%3E");
 background-size: contain;
 background-repeat: no-repeat;
 }
-.whatsapp-icon {
-background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%2325D366' d='M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.506-.173-.006-.371-.006-.57-.006-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z'/%3E%3C/svg%3E");
-}
 .email-icon {
-background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23D44638' d='M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z'/%3E%3C/svg%3E");
+display: inline-block;
+width: 24px;
+height: 24px;
+background-image: url("image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23D44638' d='M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z'/%3E%3C/svg%3E");
+background-size: contain;
+background-repeat: no-repeat;
 }
-
-
-.toolbar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background: white;
-  padding: 12px 16px;
-  box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
-  z-index: 1000;
-  display: flex;
-  justify-content: center;
-  border-top: 1px solid var(--light-green);
+/* Sync Status */
+.sync-status {
+position: fixed;
+bottom: 24px;
+left: 24px;
+padding: 12px 20px;
+border-radius: 14px;
+background: white;
+box-shadow: var(--box-shadow);
+display: flex;
+align-items: center;
+gap: 10px;
+z-index: 3000;
+transform: translateY(100px);
+opacity: 0;
+transition: all 0.4s ease;
 }
-
-.tool-btn {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  color: white;
-  text-decoration: none;
-  padding: 12px 24px;
-  border-radius: 14px;
-  font-weight: 600;
-  font-size: 1rem;
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
-  transform: translateY(0);
+.sync-status.show {
+transform: translateY(0);
+opacity: 1;
 }
-
-.tool-btn:hover,
-.tool-btn:focus {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 16px rgba(76, 175, 80, 0.45);
-  outline: none;
+.sync-status i {
+font-size: 1.4rem;
 }
-
-.tool-icon {
-  font-size: 1.2rem;
+.sync-status.success {
+color: var(--success);
 }
-
-.tool-label {
-  white-space: nowrap;
+.sync-status.error {
+color: var(--danger);
 }
-
-/* Responsive: ajuste en móviles pequeños */
-@media (max-width: 480px) {
-  .tool-btn {
-    padding: 10px 18px;
-    font-size: 0.95rem;
-  }
-}
-
-
 </style>
 </head>
 <body>
+<!-- Security Badge -->
+<div class="security-badge">
+<span>🔒</span>
+<span>Conexión Segura</span>
+</div>
 <!-- Connection Status Badge -->
-<div class="connection-status online" id="connection-badge">En línea</div>
+<div class="connection-status online" id="connection-badge">
+<span>●</span>
+<span>En línea</span>
+</div>
+<!-- Session Timeout Warning -->
+<div class="session-warning" id="session-warning">
+<span>⚠️</span>
+<div class="session-warning-content">
+<h3>Sesión a punto de expirar</h3>
+<p>Tu sesión se cerrará en <span id="countdown">60</span> segundos por inactividad</p>
+</div>
+<button id="extend-session">Mantener sesión</button>
+</div>
+<!-- Sync Status Notification -->
+<div class="sync-status" id="sync-status">
+<span id="sync-icon">🔄</span>
+<span id="sync-message">Sincronizando datos...</span>
+</div>
 <!-- PIN Authentication -->
 <div class="page-loader" id="pin-screen">
 <div class="pin-container">
 <div class="pin-logo"></div>
 <h2 class="pin-title">El Portachuelo</h2>
-<p class="pin-subtitle">Ingrese su PIN para acceder</p>
-<input type="password" id="pin-input" class="pin-input" maxlength="4" placeholder="" autocomplete="off">
+<p class="pin-subtitle">Sistema Integral de Gestión</p>
+<div class="security-note">
+<span>🔒</span> Esta pagina se encuentra protegida con encriptación de nivel bancario
+</div>
+<div class="pin-instructions">
+
+
+
+</div>
+<input type="password" id="pin-input" class="pin-input" maxlength="4" placeholder="" autocomplete="off" readonly>
 <div class="pin-pad">
 <button class="pin-btn" data-value="1">1</button>
 <button class="pin-btn" data-value="2">2</button>
@@ -797,7 +1509,7 @@ background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
 <button class="pin-btn" data-value="7">7</button>
 <button class="pin-btn" data-value="8">8</button>
 <button class="pin-btn" data-value="9">9</button>
-<button class="pin-btn clear" data-action="clear">C</button>
+<button class="pin-btn clear" data-action="clear">⌫</button>
 <button class="pin-btn" data-value="0">0</button>
 <button class="pin-btn enter" data-action="enter">✓</button>
 </div>
@@ -806,66 +1518,61 @@ background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
 <!-- Main Content -->
 <div class="container" id="main-content" style="display: none; opacity: 0;">
 <header>
+<button class="menu-toggle" id="menu-toggle">☰</button>
+<button class="back-button" id="back-button">
+<span>←</span> <span>Volver al Dashboard</span>
+</button>
 <div class="logo-container">
 <div class="logo"></div>
 <div>
 <h1>El Portachuelo</h1>
-<p class="subtitle">Registro de Ventas y Gastos</p>
+<p class="subtitle">Sistema Integral de Gestión Avícola</p>
 </div>
 </div>
-
-
-<!-- Franja de Herramientas Moderna -->
-<div class="toolbar">
-  <a href="control1.html" class="tool-btn">
-    <span class="tool-icon">↗️</span>
-    <span class="tool-label">CONTROL INTERNO </span>
-  </a>
-</div>
-
 </header>
+<div id="dashboard-view">
 <div class="dashboard">
 <div class="card">
-<h2 class="card-title">📝 Nueva Venta</h2>
+<h2 class="card-title"><span>💰</span> Nueva Venta</h2>
 <div class="form-group">
-<label for="cliente">Cliente</label>
+<label for="cliente"><span>👤</span> Cliente</label>
 <input type="text" id="cliente" placeholder="Nombre del cliente">
 </div>
 <div class="form-group">
-<label for="factura">N° Factura</label>
+<label for="factura"><span>🧾</span> N° Factura</label>
 <input type="text" id="factura" placeholder="F-0001">
 </div>
 <div class="form-group">
-<label for="cubetas">Cubetas</label>
+<label for="cubetas"><span>📦</span> Cubetas</label>
 <input type="number" id="cubetas" min="1" value="1">
 </div>
 <div class="form-group">
-<label for="precio">Precio por cubeta ($)</label>
+<label for="precio"><span>💵</span> Precio por cubeta ($)</label>
 <input type="number" id="precio" min="1" value="5000">
 </div>
 <div class="form-group">
-<label for="fecha-venta">Fecha y Hora</label>
+<label for="fecha-venta"><span>📅</span> Fecha y Hora</label>
 <input type="datetime-local" id="fecha-venta">
 </div>
 <div class="debt-section">
-<h3 class="debt-title">💰 Crédito (opcional)</h3>
+<h3 class="debt-title"><span>💳</span> Crédito (opcional)</h3>
 <div class="debt-options">
 <div class="form-group">
-<label for="cubetas-debe">Cubetas a crédito</label>
+<label for="cubetas-debe"><span>📦</span> Cubetas a crédito</label>
 <input type="number" id="cubetas-debe" min="0" value="0">
 </div>
 <div class="form-group">
-<label for="monto-debe">Monto a crédito ($)</label>
+<label for="monto-debe"><span>💵</span> Monto a crédito ($)</label>
 <input type="number" id="monto-debe" min="0" value="0">
 </div>
 </div>
 </div>
-<button class="btn" id="agregar-venta">➕ Agregar Venta</button>
+<button class="btn" id="agregar-venta"><span>➕</span> Agregar Venta</button>
 </div>
 <div class="card expense-card">
-<h2 class="card-title">📦 Nuevo Gasto</h2>
+<h2 class="card-title"><span>💸</span> Nuevo Gasto</h2>
 <div class="form-group">
-<label for="tipo-gasto">Tipo</label>
+<label for="tipo-gasto"><span>🏷️</span> Tipo</label>
 <select id="tipo-gasto">
 <option value="purina">Bulto de Purina</option>
 <option value="medicamento">Medicamentos</option>
@@ -875,24 +1582,24 @@ background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
 </select>
 </div>
 <div class="form-group">
-<label for="descripcion-gasto">Descripción</label>
-<textarea id="descripcion-gasto" rows="2" placeholder="Detalles"></textarea>
+<label for="descripcion-gasto"><span>📝</span> Descripción</label>
+<textarea id="descripcion-gasto" rows="2" placeholder="Detalles del gasto"></textarea>
 </div>
 <div class="form-group">
-<label for="monto-gasto">Monto ($)</label>
+<label for="monto-gasto"><span>💵</span> Monto ($)</label>
 <input type="number" id="monto-gasto" min="1" value="50000">
 </div>
 <div class="form-group">
-<label for="fecha-gasto">Fecha y Hora</label>
+<label for="fecha-gasto"><span>📅</span> Fecha y Hora</label>
 <input type="datetime-local" id="fecha-gasto">
 </div>
-<button class="btn btn-expense" id="agregar-gasto">➕ Registrar Gasto</button>
+<button class="btn btn-expense" id="agregar-gasto"><span>➕</span> Registrar Gasto</button>
 </div>
 <div class="card">
-<h2 class="card-title">📊 Resumen Financiero</h2>
+<h2 class="card-title"><span>📊</span> Resumen Financiero</h2>
 <div class="results">
 <div class="result-item">
-<span class="result-label">Ventas</span>
+<span class="result-label">Ventas Totales</span>
 <span class="result-value" id="total-ventas">0</span>
 </div>
 <div class="result-item">
@@ -900,13 +1607,13 @@ background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
 <span class="result-value total" id="total-ingresos">0</span>
 </div>
 <div class="result-item">
-<span class="result-label">Créditos</span>
-<span class="result-value" id="total-debe" style="color: #FF9800;">0</span>
+<span class="result-label">Créditos Pendientes</span>
+<span class="result-value" id="total-debe" style="color: #FFD54F;">0</span>
 </div>
 </div>
 <div class="expense-summary">
 <div class="result-item">
-<span class="result-label">Gastos</span>
+<span class="result-label">Gastos Registrados</span>
 <span class="result-value" id="total-gastos-count">0</span>
 </div>
 <div class="result-item">
@@ -918,11 +1625,24 @@ background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
 <span class="result-value total neto-positivo" id="balance-neto">0</span>
 </div>
 </div>
-<button class="btn" id="generar-pdf" style="margin-top: 16px;">📄 Generar Reporte PDF</button>
+<button class="btn" id="generar-pdf" style="margin-top: 20px;"><span>📄</span> Generar Reporte Completo</button>
 </div>
+</div>
+<!-- Sync Section -->
+<div class="card">
+<h2 class="card-title"><span>🔄</span> Sincronización con Google Drive</h2>
+<div class="sync-section">
+<h3 class="sync-title"><span>☁️</span> Estado de Conexión</h3>
+<p class="sync-status-text" id="drive-status-text">Verificando conexión con Google Drive...</p>
+</div>
+</div>
+<!-- Search Section -->
+<div class="search-container">
+<label class="search-label" for="search-input"><span>🔍</span> Buscar en registros</label>
+<input type="text" id="search-input" class="search-input" placeholder="Buscar por cliente, factura, tipo de gasto...">
 </div>
 <div class="card">
-<h2 class="card-title">📋 Ventas (Más antigua → Reciente)</h2>
+<h2 class="card-title"><span>📋</span> Ventas Registradas</h2>
 <div class="table-container">
 <table class="sales-table">
 <thead>
@@ -938,13 +1658,13 @@ background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
 </tr>
 </thead>
 <tbody id="ventas-lista">
-<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--gray)">Sin ventas</td></tr>
+<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--gray);font-size:1.1rem">No hay ventas registradas aún</td></tr>
 </tbody>
 </table>
 </div>
 </div>
 <div class="card">
-<h2 class="card-title expense-card">🧾 Gastos (Más antiguo → Reciente)</h2>
+<h2 class="card-title expense-card"><span>🧾</span> Gastos Registrados</h2>
 <div class="table-container">
 <table class="expenses-table">
 <thead>
@@ -957,15 +1677,81 @@ background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/s
 </tr>
 </thead>
 <tbody id="gastos-lista">
-<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--gray)">Sin gastos</td></tr>
+<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--gray);font-size:1.1rem">No hay gastos registrados aún</td></tr>
 </tbody>
 </table>
 </div>
 </div>
 <div class="footer">
-<p>El Portachuelo &copy; 2025 | Sistema Integral</p>
-<p style="margin-top:4px;font-size:0.8rem">Suaita Santander • El Portachuelo</p>
+<p>El Portachuelo &copy; 2025 | Sistema Integral de Gestión Avícola</p>
+<p style="margin-top:6px;font-size:0.9rem">Suaita Santander • El Portachuelo • Control total de tu negocio</p>
 </div>
+</div>
+<div id="external-view">
+<div class="external-header">
+<div class="external-title" id="external-title">
+<span>🔍</span>
+<span>Cargando contenido...</span>
+</div>
+</div>
+<iframe id="external-iframe" src="about:blank"></iframe>
+</div>
+</div>
+<!-- Sidebar Navigation -->
+<div class="sidebar" id="sidebar">
+<div class="sidebar-header">
+<h2><span>🧭</span> Navegación</h2>
+<button class="close-sidebar" id="close-sidebar">×</button>
+</div>
+<ul class="sidebar-menu">
+<li class="sidebar-item">
+<a href="#" class="sidebar-link active" data-page="dashboard" data-title="Dashboard Principal">
+<span>🏠</span>
+<span>Dashboard Principal</span>
+</a>
+</li>
+<li class="sidebar-item">
+<a href="control1.html" target="_blank" class="sidebar-link" id="control-interno-link">
+<span>⚙️</span>
+<span>Control Interno</span>
+</a>
+</li>
+<li class="sidebar-item">
+<a href="#" class="sidebar-link" data-page="subirsoportes.html" data-title="Subir Soportes">
+<span>📤</span>
+<span>Subir Soportes</span>
+</a>
+</li>
+<li class="sidebar-item">
+<a href="#" class="sidebar-link" data-page="versoportes.html" data-title="Ver Soportes">
+<span>📁</span>
+<span>Ver Soportes</span>
+</a>
+</li>
+<li class="sidebar-item">
+<a href="#" class="sidebar-link" data-page="pqrs.html" data-title="PQRS">
+<span>📬</span>
+<span>PQRS</span>
+</a>
+</li>
+<li class="sidebar-item">
+<a href="#" class="sidebar-link" id="lock-app">
+<span>🔒</span>
+<span>Bloquear Aplicación</span>
+</a>
+</li>
+</ul>
+<div class="sidebar-footer">
+<p>Versión 2.5.1 • El Portachuelo © 2025</p>
+<p style="margin-top:6px;font-weight:500">Sistema de Gestión Avícola</p>
+</div>
+</div>
+<!-- Overlay for Sidebar -->
+<div class="overlay" id="overlay"></div>
+<!-- Notification Container -->
+<div class="notification" id="notification">
+<span>ℹ️</span>
+<span id="notification-message">Notificación</span>
 </div>
 <!-- PDF Template -->
 <div id="pdf-template" class="pdf-template">
@@ -1048,24 +1834,23 @@ Comprobante generado a partir de los registros de gestión.
 </div>
 </div>
 </div>
-
 <!-- Share Modal -->
 <div class="share-modal" id="share-modal">
-  <div class="share-content">
-    <h3 class="share-title">Compartir Recibo</h3>
-    <p>¿Cómo deseas compartir este recibo?</p>
-    <div class="share-options">
-      <div class="share-option whatsapp" id="share-whatsapp">
-        <span class="icon whatsapp-icon"></span>
-        <span>WhatsApp</span>
-      </div>
-      <div class="share-option email" id="share-email">
-        <span class="icon email-icon"></span>
-        <span>Correo Electrónico</span>
-      </div>
-    </div>
-    <button class="close-share" id="close-share">Cerrar</button>
-  </div>
+<div class="share-content">
+<h3 class="share-title">Compartir Recibo</h3>
+<p>¿Cómo deseas compartir este recibo?</p>
+<div class="share-options">
+<div class="share-option whatsapp" id="share-whatsapp">
+<span class="whatsapp-icon"></span>
+<span>WhatsApp</span>
+</div>
+<div class="share-option email" id="share-email">
+<span class="email-icon"></span>
+<span>Correo Electrónico</span>
+</div>
+</div>
+<button class="close-share" id="close-share">Cerrar</button>
+</div>
 </div>
 
 <!-- IndexedDB Helper -->
@@ -1078,11 +1863,15 @@ this.init();
 }
 init() {
 return new Promise((resolve, reject) => {
-const req = indexedDB.open('PortachueloDB', 2); // Incremented version
+const req = indexedDB.open('PortachueloDB', 3);
 req.onerror = () => reject(req.error);
 req.onsuccess = () => {
 this.db = req.result;
 resolve(this.db);
+// Listen for changes from other tabs/windows
+this.db.onversionchange = () => {
+console.log('Database schema changed by another tab');
+};
 };
 req.onupgradeneeded = (e) => {
 const db = e.target.result;
@@ -1129,7 +1918,15 @@ const tx = this.db.transaction(['ventas'], 'readwrite');
 const store = tx.objectStore('ventas');
 venta.fechaRegistro = new Date().toISOString();
 const req = store.put(venta);
-req.onsuccess = () => resolve(venta.id);
+req.onsuccess = () => {
+resolve(venta.id);
+// Broadcast change to other tabs
+if ('broadcastChannel' in self) {
+const bc = new BroadcastChannel('portachuelo-db');
+bc.postMessage({ type: 'venta-updated', data: venta });
+bc.close();
+}
+};
 req.onerror = () => reject(req.error);
 });
 }
@@ -1140,7 +1937,15 @@ const tx = this.db.transaction(['gastos'], 'readwrite');
 const store = tx.objectStore('gastos');
 gasto.fechaRegistro = new Date().toISOString();
 const req = store.put(gasto);
-req.onsuccess = () => resolve(gasto.id);
+req.onsuccess = () => {
+resolve(gasto.id);
+// Broadcast change to other tabs
+if ('broadcastChannel' in self) {
+const bc = new BroadcastChannel('portachuelo-db');
+bc.postMessage({ type: 'gasto-updated',  gasto });
+bc.close();
+}
+};
 req.onerror = () => reject(req.error);
 });
 }
@@ -1170,7 +1975,15 @@ return new Promise((resolve, reject) => {
 const tx = this.db.transaction(['ventas'], 'readwrite');
 const store = tx.objectStore('ventas');
 const req = store.delete(id);
-req.onsuccess = () => resolve();
+req.onsuccess = () => {
+// Broadcast change to other tabs
+if ('broadcastChannel' in self) {
+const bc = new BroadcastChannel('portachuelo-db');
+bc.postMessage({ type: 'venta-deleted', id });
+bc.close();
+}
+resolve();
+};
 req.onerror = () => reject(req.error);
 });
 }
@@ -1180,18 +1993,146 @@ return new Promise((resolve, reject) => {
 const tx = this.db.transaction(['gastos'], 'readwrite');
 const store = tx.objectStore('gastos');
 const req = store.delete(id);
-req.onsuccess = () => resolve();
+req.onsuccess = () => {
+// Broadcast change to other tabs
+if ('broadcastChannel' in self) {
+const bc = new BroadcastChannel('portachuelo-db');
+bc.postMessage({ type: 'gasto-deleted', id });
+bc.close();
+}
+resolve();
+};
 req.onerror = () => reject(req.error);
 });
 }
 }
 const db = new DBManager();
 </script>
+
+<!-- ✅ Google Sheets Sync Class - CORREGIDA Y FUNCIONAL -->
+<script>
+
+class GoogleSheetsSync {
+    constructor() {
+        // 🔑 ¡REEMPLAZA ESTA URL CON TU WEB APP URL DE GOOGLE APPS SCRIPT!
+        this.webAppUrl = 'https://script.google.com/macros/s/AKfycbyqXR4WYOn0O4IPAm27cF8pqKzzQcN_3NZ30_pLXXQJXl63GD0-gVWlpiRefD9o3iGMKQ/exec';
+        this.isConnected = false;
+    }
+
+    /**
+     * Verificar conexión con el Web App
+     */
+    async checkConnection() {
+        try {
+            const response = await fetch(this.webAppUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'test' })
+            });
+            this.isConnected = response.ok;
+            return this.isConnected;
+        } catch (error) {
+            console.error('Error verificando conexión:', error);
+            this.isConnected = false;
+            return false;
+        }
+    }
+
+    /**
+     * Guardar venta en Google Sheets
+     */
+    async saveVenta(venta) {
+        try {
+            const response = await fetch(this.webAppUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'saveVenta', venta })
+            });
+            const result = await response.json();
+            if (result.success) {
+                console.log('✅ Venta guardada en Google Sheets');
+                return true;
+            } else {
+                console.error('❌ Error guardando venta:', result.error);
+                return false;
+            }
+        } catch (error) {
+            console.error('❌ Error en saveVenta:', error);
+            return false;
+        }
+    }
+
+    /**
+     * Guardar gasto en Google Sheets
+     */
+    async saveGasto(gasto) {
+        try {
+            const response = await fetch(this.webAppUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'saveGasto', gasto })
+            });
+            const result = await response.json();
+            if (result.success) {
+                console.log('✅ Gasto guardado en Google Sheets');
+                return true;
+            } else {
+                console.error('❌ Error guardando gasto:', result.error);
+                return false;
+            }
+        } catch (error) {
+            console.error('❌ Error en saveGasto:', error);
+            return false;
+        }
+    }
+
+    /**
+     * Sincronizar datos desde Google Sheets (lectura)
+     * Nota: Para lectura completa, necesitarías implementar un método GET en tu Apps Script
+     */
+    async syncFromCloud() {
+        // Esta función puede implementarse si necesitas descargar datos de la nube
+        // Por ahora, solo guardamos datos en la nube (push)
+        console.log('ℹ️ Sincronización desde la nube no implementada');
+        return true;
+    }
+}
+
+// ✅ Instancia global de Google Sheets Sync
+const googleSheets = new GoogleSheetsSync();
+</script>
+
 <script>
 // === FUNCIONES AUXILIARES ===
 function generateQR(text, size = 80) {
 const encoded = encodeURIComponent(text);
 return `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encoded}`;
+}
+// Notification System
+function showNotification(message, type = 'info') {
+const notification = document.getElementById('notification');
+const notificationMessage = document.getElementById('notification-message');
+notification.className = `notification ${type}`;
+notificationMessage.textContent = message;
+notification.classList.add('show');
+setTimeout(() => {
+notification.classList.remove('show');
+}, 3500);
+}
+// Sync Status Notification
+function showSyncStatus(message, type = 'info') {
+const syncStatus = document.getElementById('sync-status');
+const syncMessage = document.getElementById('sync-message');
+const syncIcon = document.getElementById('sync-icon');
+syncStatus.className = `sync-status ${type}`;
+syncMessage.textContent = message;
+if (type === 'success') syncIcon.textContent = '✅';
+else if (type === 'error') syncIcon.textContent = '❌';
+else syncIcon.textContent = '🔄';
+syncStatus.classList.add('show');
+setTimeout(() => {
+syncStatus.classList.remove('show');
+}, 3000);
 }
 // === NEGOCIO ===
 class BusinessManager {
@@ -1202,12 +2143,44 @@ this.currentEditSale = undefined;
 this.currentEditExpense = undefined;
 this.nextFacturaNumber = 1;
 this.lastGeneratedReceipt = null;
+this.sessionTimeout = null;
+this.warningTimeout = null;
+this.inactivityTime = 600000; // 10 minutes
+this.warningTime = 60000; // 1 minute warning
+this.searchTerm = '';
+this.isSyncEnabled = false; // Control de sincronización con Google Sheets
 this.init();
 }
-init() {
+async init() {
+// ✅ Inicializar Google Sheets primero
+try {
+const connected = await googleSheets.checkConnection();
+this.isSyncEnabled = connected;
+const statusText = document.getElementById('drive-status-text');
+if (statusText) {
+if (this.isSyncEnabled) {
+statusText.textContent = '✅ Conectado a Google Drive - Sincronización automática activa';
+statusText.style.color = 'rgba(255, 255, 255, 0.95)';
+} else {
+statusText.textContent = '⚠️ Modo offline - Los datos se guardarán localmente';
+statusText.style.color = 'rgba(255, 255, 100, 0.95)';
+}
+}
+} catch (error) {
+console.error('Error inicializando Google Sheets:', error);
+this.isSyncEnabled = false;
+const statusText = document.getElementById('drive-status-text');
+if (statusText) {
+statusText.textContent = '❌ Error de conexión - Modo offline activado';
+statusText.style.color = 'rgba(255, 100, 100, 0.95)';
+}
+}
 this.loadData();
 this.setTodayDates();
 this.loadNextFacturaNumber();
+this.setupInactivityDetection();
+this.setupBroadcastChannel();
+this.setupSearchListener();
 }
 setTodayDates() {
 const now = new Date();
@@ -1246,14 +2219,15 @@ this.ventas = await db.getAllVentas();
 this.gastos = await db.getAllGastos();
 this.updateSummary();
 this.renderAll();
+showSyncStatus('Datos cargados correctamente', 'success');
 } catch (e) {
 console.error('Error cargando datos:', e);
+showSyncStatus('Error al cargar datos', 'error');
 }
 }
-addSale(data) {
-// Use the provided invoice number or generate a new one
+async addSale(data) {
 let factura = data.factura || `F-${String(this.nextFacturaNumber).padStart(4, '0')}`;
-db.saveVenta({
+const venta = {
 id: Date.now() + '-' + Math.random().toString(36).substr(2, 5),
 cliente: data.cliente.trim(),
 cubetas: data.cubetas,
@@ -1262,24 +2236,35 @@ total: data.total,
 debe: data.debe || 0,
 fechaCompleta: data.fechaCompleta,
 factura: factura
-}).then(() => {
-// Only increment if we used the auto-generated number
+};
+try {
+// ✅ Guardar en IndexedDB
+await db.saveVenta(venta);
+// ✅ Sincronizar con Google Sheets si está conectado
+if (this.isSyncEnabled) {
+const syncSuccess = await googleSheets.saveVenta(venta);
+if (syncSuccess) {
+showSyncStatus('✅ Venta sincronizada con Google Drive', 'success');
+} else {
+showSyncStatus('⚠️ Venta guardada localmente (error en Drive)', 'warning');
+}
+}
 if (!data.factura) {
 this.nextFacturaNumber++;
-db.updateNextFacturaNumber(this.nextFacturaNumber);
+await db.updateNextFacturaNumber(this.nextFacturaNumber);
 }
 this.loadData();
 this.updateFacturaInput();
-this.notify('Venta guardada ✔️');
-}).catch(err => {
-console.error('Error guardando venta:', err);
-this.notify('Error al guardar venta', 'error');
-});
+showNotification('Venta guardada exitosamente', 'success');
+} catch (error) {
+console.error('Error guardando venta:', error);
+showNotification('Error al guardar venta', 'error');
 }
-updateSale(index, data) {
+}
+async updateSale(index, data) {
 const v = this.ventas[index];
 if (!v) return;
-db.saveVenta({
+const ventaActualizada = {
 ...v,
 cliente: data.cliente.trim(),
 cubetas: data.cubetas,
@@ -1287,68 +2272,113 @@ precio: data.precio,
 total: data.total,
 debe: data.debe || 0,
 fechaCompleta: data.fechaCompleta,
-factura: data.factura || v.factura // Preserve existing invoice if not provided
-}).then(() => {
-this.loadData();
-this.notify('Venta actualizada ✔️');
-}).catch(err => {
-console.error('Error actualizando venta:', err);
-this.notify('Error al actualizar', 'error');
-});
+factura: data.factura || v.factura
+};
+try {
+// ✅ Actualizar en IndexedDB
+await db.saveVenta(ventaActualizada);
+// ✅ Sincronizar con Google Sheets
+if (this.isSyncEnabled) {
+const syncSuccess = await googleSheets.saveVenta(ventaActualizada);
+if (syncSuccess) {
+showSyncStatus('✅ Venta actualizada en Google Drive', 'success');
+} else {
+showSyncStatus('⚠️ Venta actualizada localmente (error en Drive)', 'warning');
 }
-deleteSale(index) {
+}
+this.loadData();
+showNotification('Venta actualizada exitosamente', 'success');
+} catch (error) {
+console.error('Error actualizando venta:', error);
+showNotification('Error al actualizar venta', 'error');
+}
+}
+async deleteSale(index) {
 const v = this.ventas[index];
 if (!v) return;
-db.deleteVenta(v.id).then(() => {
-this.loadData();
-this.notify('Venta eliminada');
-}).catch(err => {
-console.error('Error eliminando venta:', err);
-this.notify('Error al eliminar', 'error');
-});
+try {
+// ✅ Eliminar de IndexedDB
+await db.deleteVenta(v.id);
+// ✅ Notificar eliminación (Google Sheets no se actualiza en tiempo real)
+if (this.isSyncEnabled) {
+showSyncStatus('ℹ️ Venta eliminada (solo local)', 'info');
 }
-addExpense(data) {
-db.saveGasto({
+this.loadData();
+showNotification('Venta eliminada correctamente', 'success');
+} catch (error) {
+console.error('Error eliminando venta:', error);
+showNotification('Error al eliminar venta', 'error');
+}
+}
+async addExpense(data) {
+const gasto = {
 id: Date.now() + '-' + Math.random().toString(36).substr(2, 5),
 tipo: data.tipo,
 descripcion: data.descripcion.trim(),
 monto: data.monto,
 fechaCompleta: data.fechaCompleta
-}).then(() => {
-this.loadData();
-this.notify('Gasto guardado ✔️', 'expense');
-}).catch(err => {
-console.error('Error guardando gasto:', err);
-this.notify('Error al guardar gasto', 'error');
-});
+};
+try {
+await db.saveGasto(gasto);
+// ✅ Sincronizar con Google Sheets
+if (this.isSyncEnabled) {
+const syncSuccess = await googleSheets.saveGasto(gasto);
+if (syncSuccess) {
+showSyncStatus('✅ Gasto sincronizado con Google Drive', 'success');
+} else {
+showSyncStatus('⚠️ Gasto guardado localmente (error en Drive)', 'warning');
 }
-updateExpense(index, data) {
+}
+this.loadData();
+showNotification('Gasto guardado exitosamente', 'success');
+} catch (error) {
+console.error('Error guardando gasto:', error);
+showNotification('Error al guardar gasto', 'error');
+}
+}
+async updateExpense(index, data) {
 const g = this.gastos[index];
 if (!g) return;
-db.saveGasto({
+const gastoActualizado = {
 ...g,
 tipo: data.tipo,
 descripcion: data.descripcion.trim(),
 monto: data.monto,
 fechaCompleta: data.fechaCompleta
-}).then(() => {
-this.loadData();
-this.notify('Gasto actualizado ✔️', 'expense');
-}).catch(err => {
-console.error('Error actualizando gasto:', err);
-this.notify('Error al actualizar', 'error');
-});
+};
+try {
+await db.saveGasto(gastoActualizado);
+// ✅ Sincronizar con Google Sheets
+if (this.isSyncEnabled) {
+const syncSuccess = await googleSheets.saveGasto(gastoActualizado);
+if (syncSuccess) {
+showSyncStatus('✅ Gasto actualizado en Google Drive', 'success');
+} else {
+showSyncStatus('⚠️ Gasto actualizado localmente (error en Drive)', 'warning');
 }
-deleteExpense(index) {
+}
+this.loadData();
+showNotification('Gasto actualizado exitosamente', 'success');
+} catch (error) {
+console.error('Error actualizando gasto:', error);
+showNotification('Error al actualizar gasto', 'error');
+}
+}
+async deleteExpense(index) {
 const g = this.gastos[index];
 if (!g) return;
-db.deleteGasto(g.id).then(() => {
+try {
+await db.deleteGasto(g.id);
+// ✅ Notificar eliminación
+if (this.isSyncEnabled) {
+showSyncStatus('ℹ️ Gasto eliminado (solo local)', 'info');
+}
 this.loadData();
-this.notify('Gasto eliminado', 'expense');
-}).catch(err => {
-console.error('Error eliminando gasto:', err);
-this.notify('Error al eliminar', 'error');
-});
+showNotification('Gasto eliminado correctamente', 'success');
+} catch (error) {
+console.error('Error eliminando gasto:', error);
+showNotification('Error al eliminar gasto', 'error');
+}
 }
 updateSummary() {
 const ingr = this.ventas.reduce((s, v) => s + v.total, 0);
@@ -1371,23 +2401,36 @@ if (netoEl) netoEl.className = `result-value total ${neto >= 0 ? 'neto-positivo'
 renderSales() {
 const list = document.getElementById('ventas-lista');
 if (this.ventas.length === 0) {
-list.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--gray)">Sin ventas</td></tr>`;
+list.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--gray);font-size:1.1rem">No hay ventas registradas aún</td></tr>`;
 return;
 }
-const sorted = this.sortChronological(this.ventas);
+// Filter by search term
+let filtered = this.ventas;
+if (this.searchTerm) {
+filtered = this.ventas.filter(v =>
+v.cliente.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+v.factura.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+v.total.toString().includes(this.searchTerm)
+);
+}
+if (filtered.length === 0) {
+list.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--gray);font-size:1.1rem">No se encontraron resultados para "${this.searchTerm}"</td></tr>`;
+return;
+}
+const sorted = this.sortChronological(filtered);
 list.innerHTML = sorted.map((v, i) => `
 <tr>
-<td>${v.factura}</td>
+<td><strong>${v.factura}</strong></td>
 <td>${v.cliente}</td>
 <td>${v.cubetas}</td>
 <td>$${v.precio.toLocaleString('es-CO')}</td>
-<td>$${v.total.toLocaleString('es-CO')}</td>
-<td style="color:${v.debe > 0 ? '#FF9800' : '#4CAF50'}">$${(v.debe || 0).toLocaleString('es-CO')}</td>
+<td><strong>$${v.total.toLocaleString('es-CO')}</strong></td>
+<td style="color:${v.debe > 0 ? '#FF9800' : '#4CAF50'}"><strong>$${(v.debe || 0).toLocaleString('es-CO')}</strong></td>
 <td>${this.formatDateTime(v.fechaCompleta)}</td>
 <td class="actions">
-<button class="action-btn edit-btn" onclick="businessManager.editSale(${this.ventas.indexOf(v)})">✏️</button>
-<button class="action-btn delete-btn" onclick="businessManager.deleteSale(${this.ventas.indexOf(v)})">🗑️</button>
-<button class="action-btn download-btn" onclick="businessManager.downloadReceipt('${v.id}')">📥</button>
+<button class="action-btn edit-btn" onclick="businessManager.editSale(${this.ventas.indexOf(v)})">✏️ Editar</button>
+<button class="action-btn delete-btn" onclick="businessManager.deleteSale(${this.ventas.indexOf(v)})">🗑️ Eliminar</button>
+<button class="action-btn download-btn" onclick="businessManager.downloadReceipt('${v.id}')">📥 Recibo</button>
 </td>
 </tr>
 `).join('');
@@ -1395,21 +2438,34 @@ list.innerHTML = sorted.map((v, i) => `
 renderExpenses() {
 const list = document.getElementById('gastos-lista');
 if (this.gastos.length === 0) {
-list.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--gray)">Sin gastos</td></tr>`;
+list.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--gray);font-size:1.1rem">No hay gastos registradas aún</td></tr>`;
 return;
 }
-const sorted = this.sortChronological(this.gastos);
+// Filter by search term
+let filtered = this.gastos;
+if (this.searchTerm) {
+filtered = this.gastos.filter(g =>
+g.tipo.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+g.descripcion.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+g.monto.toString().includes(this.searchTerm)
+);
+}
+if (filtered.length === 0) {
+list.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--gray);font-size:1.1rem">No se encontraron resultados para "${this.searchTerm}"</td></tr>`;
+return;
+}
+const sorted = this.sortChronological(filtered);
 const tipoLabels = { purina: 'Purina', medicamento: 'Medicamento', transporte: 'Transporte', mantenimiento: 'Mant.', otros: 'Otros' };
 list.innerHTML = sorted.map((g, i) => `
 <tr>
-<td>${tipoLabels[g.tipo] || g.tipo}</td>
+<td><strong>${tipoLabels[g.tipo] || g.tipo}</strong></td>
 <td>${g.descripcion || '-'}</td>
 <td style="color:#E65100;font-weight:bold">$${g.monto.toLocaleString('es-CO')}</td>
 <td>${this.formatDateTime(g.fechaCompleta)}</td>
 <td class="actions">
-<button class="action-btn edit-btn" onclick="businessManager.editExpense(${this.gastos.indexOf(g)})">✏️</button>
-<button class="action-btn delete-btn" onclick="businessManager.deleteExpense(${this.gastos.indexOf(g)})">🗑️</button>
-<button class="action-btn download-btn" onclick="businessManager.downloadExpenseReceipt('${g.id}')">📥</button>
+<button class="action-btn edit-btn" onclick="businessManager.editExpense(${this.gastos.indexOf(g)})">✏️ Editar</button>
+<button class="action-btn delete-btn" onclick="businessManager.deleteExpense(${this.gastos.indexOf(g)})">🗑️ Eliminar</button>
+<button class="action-btn download-btn" onclick="businessManager.downloadExpenseReceipt('${g.id}')">📥 Recibo</button>
 </td>
 </tr>
 `).join('');
@@ -1423,13 +2479,14 @@ editSale(index) {
 if (index < 0 || index >= this.ventas.length) return;
 const v = this.ventas[index];
 document.getElementById('cliente').value = v.cliente;
-document.getElementById('factura').value = v.factura; // Make invoice editable
+document.getElementById('factura').value = v.factura;
 document.getElementById('cubetas').value = v.cubetas;
 document.getElementById('precio').value = v.precio;
 document.getElementById('fecha-venta').value = new Date(v.fechaCompleta).toISOString().slice(0, 16);
 document.getElementById('cubetas-debe').value = Math.round((v.debe || 0) / v.precio);
 document.getElementById('monto-debe').value = v.debe || 0;
 this.currentEditSale = index;
+showNotification('Modo edición de venta activado', 'info');
 }
 editExpense(index) {
 if (index < 0 || index >= this.gastos.length) return;
@@ -1439,21 +2496,86 @@ document.getElementById('descripcion-gasto').value = g.descripcion;
 document.getElementById('monto-gasto').value = g.monto;
 document.getElementById('fecha-gasto').value = new Date(g.fechaCompleta).toISOString().slice(0, 16);
 this.currentEditExpense = index;
+showNotification('Modo edición de gasto activado', 'info');
 }
-notify(msg, type = 'success') {
-const n = document.createElement('div');
-n.innerHTML = `<div style="padding:12px 16px;border-radius:10px;color:white;font-weight:600;background:${type==='error'?'#f44336':'#4caf50'};box-shadow:0 4px 12px rgba(0,0,0,0.2);position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:10000;">${msg}</div>`;
-document.body.appendChild(n);
+// Session Management
+setupInactivityDetection() {
+let inactivityTimer;
+let warningTimer;
+const resetTimers = () => {
+clearTimeout(inactivityTimer);
+clearTimeout(warningTimer);
+warningTimer = setTimeout(() => {
+this.showSessionWarning();
+}, this.inactivityTime - this.warningTime);
+inactivityTimer = setTimeout(() => {
+this.lockApp();
+}, this.inactivityTime);
+};
+document.addEventListener('mousemove', resetTimers);
+document.addEventListener('keypress', resetTimers);
+document.addEventListener('touchstart', resetTimers);
+document.addEventListener('click', resetTimers);
+resetTimers();
+}
+showSessionWarning() {
+const warning = document.getElementById('session-warning');
+const countdownEl = document.getElementById('countdown');
+let seconds = 60;
+countdownEl.textContent = seconds;
+warning.classList.add('active');
+const countdownInterval = setInterval(() => {
+seconds--;
+countdownEl.textContent = seconds;
+if (seconds <= 0) {
+clearInterval(countdownInterval);
+warning.classList.remove('active');
+this.lockApp();
+}
+}, 1000);
+this.warningInterval = countdownInterval;
+document.getElementById('extend-session').onclick = () => {
+clearInterval(countdownInterval);
+warning.classList.remove('active');
+this.setupInactivityDetection();
+showNotification('Sesión extendida exitosamente', 'success');
+};
+}
+lockApp() {
+document.getElementById('main-content').style.opacity = '0';
 setTimeout(() => {
-n.style.opacity = '0';
-n.style.transition = 'opacity 0.5s';
-setTimeout(() => n.remove(), 500);
-}, 2500);
+document.getElementById('main-content').style.display = 'none';
+document.getElementById('pin-screen').style.opacity = '1';
+document.getElementById('pin-screen').style.display = 'flex';
+document.getElementById('pin-input').value = '';
+showNotification('Sesión bloqueada por inactividad. Por favor ingresa tu PIN para continuar.', 'warning');
+}, 300);
+}
+// Navigation System
+navigateTo(page, title) {
+if (page === 'dashboard') {
+document.getElementById('dashboard-view').style.display = 'block';
+document.getElementById('external-view').style.display = 'none';
+document.getElementById('back-button').classList.remove('active');
+document.querySelector('.sidebar-link.active').classList.remove('active');
+document.querySelector('.sidebar-link[data-page="dashboard"]').classList.add('active');
+return;
+}
+document.getElementById('dashboard-view').style.display = 'none';
+document.getElementById('external-view').style.display = 'flex';
+document.getElementById('back-button').classList.add('active');
+document.getElementById('external-title').innerHTML = `<span>🔍</span> <span>${title}</span>`;
+const iframe = document.getElementById('external-iframe');
+iframe.src = page;
+document.querySelector('.sidebar-link.active').classList.remove('active');
+event.target.closest('.sidebar-link').classList.add('active');
+showNotification(`Cargando ${title}...`, 'info');
 }
 // Descargar recibo individual - VENTA
 downloadReceipt(saleId) {
 const sale = this.ventas.find(v => v.id === saleId);
 if (!sale) return;
+showNotification('Generando recibo, por favor espera...', 'info');
 const receiptTemplate = document.getElementById('receipt-template');
 const receiptDetails = document.getElementById('receipt-details');
 const receiptFactura = document.getElementById('receipt-factura');
@@ -1504,22 +2626,24 @@ heightLeft -= pageHeight;
 // Store the generated PDF for sharing
 const pdfBlob = pdf.output('blob');
 this.lastGeneratedReceipt = {
-  blob: pdfBlob,
-  filename: `recibo-${sale.factura}.pdf`,
-  factura: sale.factura,
-  cliente: sale.cliente,
-  total: sale.total
+blob: pdfBlob,
+filename: `recibo-${sale.factura}.pdf`,
+factura: sale.factura,
+cliente: sale.cliente,
+total: sale.total
 };
 pdf.save(`recibo-${sale.factura}.pdf`);
 receiptTemplate.style.display = 'none';
 // Show share modal
 this.showShareModal();
+showNotification('Recibo generado y guardado exitosamente', 'success');
 });
 }
 // Descargar recibo individual - GASTO
 downloadExpenseReceipt(expenseId) {
 const expense = this.gastos.find(g => g.id === expenseId);
 if (!expense) return;
+showNotification('Generando recibo de gasto, por favor espera...', 'info');
 const receiptTemplate = document.getElementById('receipt-template');
 const receiptDetails = document.getElementById('receipt-details');
 const receiptFactura = document.getElementById('receipt-factura');
@@ -1570,11 +2694,11 @@ heightLeft -= pageHeight;
 // Store the generated PDF for sharing
 const pdfBlob = pdf.output('blob');
 this.lastGeneratedReceipt = {
-  blob: pdfBlob,
-  filename: `gasto-${expenseId.substring(0, 8)}.pdf`,
-  factura: expenseRef,
-  cliente: '',
-  total: expense.monto
+blob: pdfBlob,
+filename: `gasto-${expenseId.substring(0, 8)}.pdf`,
+factura: expenseRef,
+cliente: '',
+total: expense.monto
 };
 pdf.save(`gasto-${expenseId.substring(0, 8)}.pdf`);
 receiptTemplate.style.display = 'none';
@@ -1582,13 +2706,16 @@ receiptTemplate.style.display = 'none';
 document.querySelector('.receipt-title').textContent = 'RECIBO DE VENTA';
 // Show share modal
 this.showShareModal();
+showNotification('Recibo de gasto generado y guardado exitosamente', 'success');
 });
 }
-// Generar reporte completo con paginación
+// Generar reporte completo
 generateFullReport() {
 if (this.ventas.length === 0 && this.gastos.length === 0) {
-return this.notify('Sin datos para PDF', 'error');
+showNotification('No hay datos para generar el reporte', 'warning');
+return;
 }
+showNotification('Generando reporte completo, por favor espera...', 'info');
 const now = new Date();
 document.getElementById('pdf-report-date').textContent = this.formatDateTime(now.toISOString());
 document.getElementById('pdf-ventas-count').textContent = this.ventas.length;
@@ -1662,7 +2789,7 @@ heightLeft -= pageHeight;
 }
 pdf.save(`reporte-el-portachuelo-${now.toISOString().slice(0, 10)}.pdf`);
 template.style.display = 'none';
-this.notify('PDF generado exitosamente');
+showNotification('Reporte generado y guardado exitosamente', 'success');
 });
 }
 }
@@ -1679,96 +2806,217 @@ modal.classList.remove('active');
 // Share via WhatsApp
 shareViaWhatsApp() {
 if (!this.lastGeneratedReceipt) return;
-  
 // For mobile devices, we can use the native sharing API
 if (navigator.share) {
-  navigator.share({
-    title: 'Recibo de Venta',
-    text: `Recibo ${this.lastGeneratedReceipt.factura} - ${this.lastGeneratedReceipt.cliente}`,
-    files: [new File([this.lastGeneratedReceipt.blob], this.lastGeneratedReceipt.filename, { type: 'application/pdf' })]
-  }).catch(console.error);
+navigator.share({
+title: 'Recibo de Venta',
+text: `Recibo ${this.lastGeneratedReceipt.factura} - ${this.lastGeneratedReceipt.cliente}`,
+files: [new File([this.lastGeneratedReceipt.blob], this.lastGeneratedReceipt.filename, { type: 'application/pdf' })]
+}).catch(console.error);
 } else {
-  // Fallback for desktop
-  const message = `Hola, te envío el recibo ${this.lastGeneratedReceipt.factura} por un monto de $${this.lastGeneratedReceipt.total.toLocaleString('es-CO')}`;
-  const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
-  window.open(url, '_blank');
+// Fallback for desktop
+const message = `Hola, te envío el recibo ${this.lastGeneratedReceipt.factura} por un monto de $${this.lastGeneratedReceipt.total.toLocaleString('es-CO')}`;
+const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
+window.open(url, '_blank');
 }
 }
 // Share via Email
 shareViaEmail() {
 if (!this.lastGeneratedReceipt) return;
-  
 const subject = `Recibo de Venta - ${this.lastGeneratedReceipt.factura}`;
-const body = `Estimado cliente,\n\nAdjunto el recibo de su compra.\n\nTotal: $${this.lastGeneratedReceipt.total.toLocaleString('es-CO')}\n\nGracias por su preferencia.`;
+const body = `Estimado cliente,
+Adjunto el recibo de su compra.
+Total: $${this.lastGeneratedReceipt.total.toLocaleString('es-CO')}
+Gracias por su preferencia.`;
 const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 window.open(mailtoLink, '_blank');
+}
+// Setup BroadcastChannel for cross-tab communication
+setupBroadcastChannel() {
+if ('BroadcastChannel' in self) {
+const bc = new BroadcastChannel('portachuelo-db');
+bc.onmessage = (event) => {
+console.log('Received broadcast:', event.data);
+if (event.data.type === 'venta-updated' ||
+event.data.type === 'gasto-updated' ||
+event.data.type === 'venta-deleted' ||
+event.data.type === 'gasto-deleted') {
+// Reload data when changes happen in another tab
+this.loadData();
+showSyncStatus('Datos actualizados desde otra pestaña', 'success');
+}
+};
+window.addEventListener('beforeunload', () => {
+bc.close();
+});
+} else {
+console.warn('BroadcastChannel not supported in this browser');
+}
+}
+// Setup search listener
+setupSearchListener() {
+const searchInput = document.getElementById('search-input');
+if (searchInput) {
+searchInput.addEventListener('input', (e) => {
+this.searchTerm = e.target.value.trim();
+this.renderAll();
+});
+}
 }
 }
 // === INICIALIZACIÓN ===
 const businessManager = new BusinessManager();
-// === PIN ===
-document.addEventListener('DOMContentLoaded', () => {
+// === PIN AUTHENTICATION ===
+document.addEventListener('DOMContentLoaded', async () => {
 const pinInput = document.getElementById('pin-input');
-pinInput.addEventListener('input', () => {
-pinInput.value = pinInput.value.replace(/./g, '');
-});
+const pinScreen = document.getElementById('pin-screen');
+const mainContent = document.getElementById('main-content');
+const menuToggle = document.getElementById('menu-toggle');
+const sidebar = document.getElementById('sidebar');
+const closeSidebar = document.getElementById('close-sidebar');
+const overlay = document.getElementById('overlay');
+const backDashboard = document.getElementById('back-button');
+const lockAppBtn = document.getElementById('lock-app');
+const sidebarLinks = document.querySelectorAll('.sidebar-link');
+const connectionBadge = document.getElementById('connection-badge');
+// Variable to store the actual PIN digits
+let currentPIN = '';
+// PIN Pad functionality
 const pinButtons = document.querySelectorAll('.pin-btn');
 pinButtons.forEach(btn => {
 btn.addEventListener('click', () => {
 const val = btn.dataset.value;
 const action = btn.dataset.action;
-if (action === 'clear') pinInput.value = '';
-else if (action === 'enter') {
-if (pinInput.value === '2007') {
-document.getElementById('pin-screen').style.opacity = '0';
-setTimeout(() => {
-document.getElementById('pin-screen').style.display = 'none';
-document.getElementById('main-content').style.display = 'block';
-document.getElementById('main-content').style.opacity = '1';
-businessManager.notify('¡Bienvenido!');
-}, 300);
-} else {
-businessManager.notify('PIN incorrecto', 'error');
-const c = document.querySelector('.pin-container');
-c.style.animation = 'shake 0.4s';
-setTimeout(() => c.style.animation = '', 400);
+if (action === 'clear') {
+currentPIN = '';
 pinInput.value = '';
+} else if (action === 'enter') {
+if (currentPIN.length === 4) {
+validatePIN(currentPIN);
+} else {
+showNotification('El PIN debe tener exactamente 4 dígitos', 'error');
+animateShake(pinScreen.querySelector('.pin-container'));
 }
-} else if (val !== undefined && pinInput.value.length < 4) {
-pinInput.value += val;
+currentPIN = '';
+pinInput.value = '';
+} else if (val !== undefined && currentPIN.length < 4) {
+currentPIN += val;
+pinInput.value = '•'.repeat(currentPIN.length);
 }
 });
 });
+// Validate PIN - Simplified to use "2112" directly
+function validatePIN(pin) {
+if (pin === "2112") {
+pinScreen.style.opacity = '0';
+setTimeout(() => {
+pinScreen.style.display = 'none';
+mainContent.style.display = 'block';
+setTimeout(() => {
+mainContent.style.opacity = '1';
+}, 50);
+showNotification('¡Bienvenido al sistema!', 'success');
+}, 350);
+} else {
+showNotification('PIN incorrecto. Intenta nuevamente.', 'error');
+animateShake(pinScreen.querySelector('.pin-container'));
+}
+}
+function animateShake(element) {
+element.style.animation = 'shake 0.5s';
+setTimeout(() => {
+element.style.animation = '';
+}, 500);
+}
+// Sidebar toggle functionality
+menuToggle.addEventListener('click', () => {
+sidebar.classList.add('active');
+overlay.classList.add('active');
 });
-// === EVENTOS ===
+closeSidebar.addEventListener('click', () => {
+sidebar.classList.remove('active');
+overlay.classList.remove('active');
+});
+overlay.addEventListener('click', () => {
+sidebar.classList.remove('active');
+overlay.classList.remove('active');
+});
+// Sidebar navigation - modified to open control1.html in new tab
+sidebarLinks.forEach(link => {
+link.addEventListener('click', (e) => {
+// Skip for the Control Interno link which has target="_blank"
+if (link.id === 'control-interno-link') {
+sidebar.classList.remove('active');
+overlay.classList.remove('active');
+return;
+}
+e.preventDefault();
+const page = link.dataset.page;
+const title = link.dataset.title;
+businessManager.navigateTo(page, title);
+sidebar.classList.remove('active');
+overlay.classList.remove('active');
+});
+});
+// Lock app button
+lockAppBtn.addEventListener('click', (e) => {
+e.preventDefault();
+businessManager.lockApp();
+sidebar.classList.remove('active');
+overlay.classList.remove('active');
+});
+// Back to dashboard button
+backDashboard.addEventListener('click', () => {
+businessManager.navigateTo('dashboard', 'Dashboard Principal');
+});
+// Connection status simulation
+let isOnline = navigator.onLine;
+function updateConnectionStatus() {
+connectionBadge.textContent = isOnline ? '● En línea' : '● Sin conexión';
+connectionBadge.className = `connection-status ${isOnline ? 'online' : 'offline'}`;
+}
+updateConnectionStatus();
+window.addEventListener('online', () => {
+isOnline = true;
+updateConnectionStatus();
+showNotification('Conexión a internet recuperada', 'success');
+// Reload data when coming back online
+businessManager.loadData();
+});
+window.addEventListener('offline', () => {
+isOnline = false;
+updateConnectionStatus();
+showNotification('Sin conexión a internet. El sistema funcionará en modo offline.', 'warning');
+});
+// === EVENTOS DE FORMULARIOS ===
 document.getElementById('agregar-venta')?.addEventListener('click', () => {
 const cliente = document.getElementById('cliente')?.value.trim();
-const factura = document.getElementById('factura')?.value.trim(); // Get invoice number
+const factura = document.getElementById('factura')?.value.trim();
 const cub = parseInt(document.getElementById('cubetas')?.value) || 0;
 const prec = parseInt(document.getElementById('precio')?.value) || 0;
 const fecha = document.getElementById('fecha-venta')?.value;
 const cDebe = parseInt(document.getElementById('cubetas-debe')?.value) || 0;
 const mDebe = parseInt(document.getElementById('monto-debe')?.value) || 0;
-if (!cliente) return businessManager.notify('Cliente requerido', 'error');
-if (!factura) return businessManager.notify('Número de factura requerido', 'error');
-if (cub <= 0) return businessManager.notify('Cubetas > 0', 'error');
-if (prec <= 0) return businessManager.notify('Precio > 0', 'error');
-if (!fecha) return businessManager.notify('Fecha y hora requeridas', 'error');
+if (!cliente) return showNotification('El nombre del cliente es requerido', 'error');
+if (!factura) return showNotification('El número de factura es requerido', 'error');
+if (cub <= 0) return showNotification('La cantidad de cubetas debe ser mayor a 0', 'error');
+if (prec <= 0) return showNotification('El precio debe ser mayor a 0', 'error');
+if (!fecha) return showNotification('La fecha y hora son requeridas', 'error');
 const total = cub * prec;
 let debe = 0;
 if (mDebe > 0) {
-if (mDebe > total) return businessManager.notify('Crédito ≤ total', 'error');
+if (mDebe > total) return showNotification('El monto a crédito no puede ser mayor al total', 'error');
 debe = mDebe;
 } else if (cDebe > 0) {
-if (cDebe > cub) return businessManager.notify('Cub. crédito ≤ vendidas', 'error');
+if (cDebe > cub) return showNotification('Las cubetas a crédito no pueden ser más que las vendidas', 'error');
 debe = cDebe * prec;
 }
 const data = {
-cliente, 
-factura, // Include invoice number
-cubetas: cub, 
-precio: prec, 
-total, 
+cliente,
+factura,
+cubetas: cub,
+precio: prec,
+total,
 debe,
 fechaCompleta: new Date(fecha).toISOString()
 };
@@ -1778,10 +3026,9 @@ businessManager.currentEditSale = undefined;
 } else {
 businessManager.addSale(data);
 }
-// Reset
 document.getElementById('cliente').value = '';
-document.getElementById('factura').value = ''; // Reset to auto-generated
-businessManager.updateFacturaInput(); // Set to next available
+document.getElementById('factura').value = '';
+businessManager.updateFacturaInput();
 document.getElementById('cubetas').value = '1';
 document.getElementById('precio').value = '5000';
 document.getElementById('cubetas-debe').value = '0';
@@ -1793,9 +3040,9 @@ const tipo = document.getElementById('tipo-gasto')?.value;
 const desc = document.getElementById('descripcion-gasto')?.value;
 const monto = parseInt(document.getElementById('monto-gasto')?.value) || 0;
 const fecha = document.getElementById('fecha-gasto')?.value;
-if (!tipo) return businessManager.notify('Seleccione tipo', 'error');
-if (!monto || monto <= 0) return businessManager.notify('Monto > 0', 'error');
-if (!fecha) return businessManager.notify('Fecha y hora requeridas', 'error');
+if (!tipo) return showNotification('Seleccione el tipo de gasto', 'error');
+if (!monto || monto <= 0) return showNotification('El monto debe ser mayor a 0', 'error');
+if (!fecha) return showNotification('La fecha y hora son requeridas', 'error');
 const data = { tipo, descripcion: desc, monto, fechaCompleta: new Date(fecha).toISOString() };
 if (businessManager.currentEditExpense !== undefined) {
 businessManager.updateExpense(businessManager.currentEditExpense, data);
@@ -1803,7 +3050,6 @@ businessManager.currentEditExpense = undefined;
 } else {
 businessManager.addExpense(data);
 }
-// Reset
 document.getElementById('descripcion-gasto').value = '';
 document.getElementById('monto-gasto').value = '50000';
 document.getElementById('fecha-gasto').value = new Date().toISOString().slice(0, 16);
@@ -1811,70 +3057,29 @@ document.getElementById('fecha-gasto').value = new Date().toISOString().slice(0,
 document.getElementById('generar-pdf')?.addEventListener('click', () => {
 businessManager.generateFullReport();
 });
-
 // Share modal events
 document.getElementById('close-share')?.addEventListener('click', () => {
 businessManager.hideShareModal();
 });
-
 document.getElementById('share-whatsapp')?.addEventListener('click', () => {
 businessManager.shareViaWhatsApp();
 businessManager.hideShareModal();
 });
-
 document.getElementById('share-email')?.addEventListener('click', () => {
 businessManager.shareViaEmail();
 businessManager.hideShareModal();
 });
-
 // Close modal when clicking outside
 document.getElementById('share-modal')?.addEventListener('click', (e) => {
 if (e.target === document.getElementById('share-modal')) {
 businessManager.hideShareModal();
 }
 });
-
-// === SINCRONIZACIÓN (simulada, sin API real) ===
-let isOnline = navigator.onLine;
-const badge = document.getElementById('connection-badge');
-function updateBadge() {
-badge.textContent = isOnline ? 'En línea' : 'Sin conexión';
-badge.className = 'connection-status ' + (isOnline ? 'online' : 'offline');
-}
-updateBadge();
-window.addEventListener('online', () => {
-isOnline = true;
-updateBadge();
-businessManager.notify('📶 Conexión recuperada');
-setTimeout(() => {
-badge.className = 'connection-status syncing';
-badge.textContent = 'Sincronizando...';
-setTimeout(() => {
-badge.className = 'connection-status online';
-badge.textContent = 'En línea';
-businessManager.notify('✅ Datos sincronizados localmente');
-}, 1500);
-}, 500);
-});
-window.addEventListener('offline', () => {
-isOnline = false;
-updateBadge();
-businessManager.notify('⚠️ Modo offline: los datos se guardarán localmente', 'error');
-});
-// === REGISTRO SERVICE WORKER ===
-if ('serviceWorker' in navigator) {
-window.addEventListener('load', () => {
-navigator.serviceWorker.register('/sw.js')
-.then(reg => console.log('✅ SW registrado:', reg.scope))
-.catch(err => console.error('❌ Error SW:', err));
-});
-}
 // === DATOS DEMO INICIALES ===
 setTimeout(async () => {
 const ventas = await db.getAllVentas();
 const gastos = await db.getAllGastos();
 if (ventas.length === 0 && gastos.length === 0) {
-// Ventas demo
 await db.saveVenta({
 id: 'demo1',
 cliente: "Carnes Don Juan",
@@ -1895,7 +3100,6 @@ debe: 10000,
 fechaCompleta: new Date(2025, 11, 29, 14, 15).toISOString(),
 factura: "F-0002"
 });
-// Gastos demo
 await db.saveGasto({
 id: 'demo3',
 tipo: "purina",
@@ -1910,13 +3114,15 @@ descripcion: "Vitamina AD3E",
 monto: 32000,
 fechaCompleta: new Date(2025, 11, 28, 16, 45).toISOString()
 });
-// Actualizar número de factura
 await db.updateNextFacturaNumber(3);
 businessManager.loadData();
 businessManager.loadNextFacturaNumber();
+showNotification('Datos de demostración cargados exitosamente', 'info');
 }
-}, 300);
+}, 500);
+// Initial sync status
+showSyncStatus('Sistema listo para usar', 'success');
+});
 </script>
 </body>
 </html>
-

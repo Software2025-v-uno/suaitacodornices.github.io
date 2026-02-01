@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario PQR</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #dbeafe 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #1e293b;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(120deg, #4f46e5, #7c3aed);
+            padding: 28px 24px;
+            text-align: center;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+            max-width: 350px;
+            margin: 0 auto;
+        }
+        
+        .form-container {
+            padding: 32px;
+        }
+        
+        .form-group {
+            margin-bottom: 24px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #334155;
+            font-size: 15px;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        
+        select {
+            appearance: none;
+            background-image: url("image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='currentColor'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 18px;
+        }
+        
+        button {
+            background: linear-gradient(120deg, #4f46e5, #7c3aed);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 16px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        button:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        button:disabled::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        .success-message {
+            text-align: center;
+            padding: 40px 20px;
+            display: none;
+        }
+        
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: #dcfce7;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            color: #16a34a;
+            font-size: 32px;
+            font-weight: bold;
+        }
+        
+        .success-title {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #0f172a;
+        }
+        
+        .success-text {
+            font-size: 18px;
+            color: #475569;
+            line-height: 1.6;
+            max-width: 400px;
+            margin: 0 auto 32px;
+        }
+        
+        .retry-button {
+            background: white;
+            color: #4f46e5;
+            border: 2px solid #4f46e5;
+            width: auto;
+            padding: 12px 32px;
+            font-size: 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .retry-button:hover {
+            background: #f1f5ff;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .error-message {
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .footer-note {
+            background: #f1f5ff;
+            padding: 16px;
+            text-align: center;
+            font-size: 14px;
+            color: #4f46e5;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        @media (max-width: 480px) {
+            .form-container {
+                padding: 24px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .success-title {
+                font-size: 22px;
+            }
+            
+            .success-text {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Formulario PQR</h1>
+            <p>Envíanos tus inquietudes, sugerencias o reclamos</p>
+        </div>
+        
+        <div class="form-container">
+            <div id="error-message" class="error-message"></div>
+            
+            <form id="pqr-form">
+                <div class="form-group">
+                    <label for="email">Correo electrónico para responder</label>
+                    <input type="email" id="email" name="email" required placeholder="tu@email.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="motivo">Motivo</label>
+                    <select id="motivo" name="motivo" required>
+                        <option value="">Seleccione un motivo</option>
+                        <option value="peticion">Petición</option>
+                        <option value="pregunta">Pregunta</option>
+                        <option value="reclamo">Reclamo</option>
+                        <option value="sugerencia">Sugerencia</option>
+                        <option value="felicitacion">Felicitación</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="asunto">Asunto</label>
+                    <input type="text" id="asunto" name="asunto" required placeholder="Breve descripción del tema">
+                </div>
+                
+                <button type="submit" id="submit-btn">Enviar Mensaje</button>
+            </form>
+            
+            <div id="success-message" class="success-message">
+                <div class="success-icon">✓</div>
+                <h2 class="success-title">¡Gracias por contactarnos!</h2>
+                <p class="success-text">Se responderá en un plazo de 3 días hábiles vía correo electrónico.</p>
+                <button class="retry-button" id="retry-btn">Enviar otro mensaje</button>
+            </div>
+        </div>
+        
+        <div class="footer-note">
+            <p>Atención al cliente: lunes a viernes, 8:00 AM - 6:00 PM</p>
+        </div>
+    </div>
+    
+    <div style="text-align: center; margin-top: 24px; color: #475569; max-width: 500px; padding: 0 20px;">
+        <p><strong>Nota:</strong> Recuerda revisar tu bandeja de correo electrónico (incluida la carpeta de spam) para recibir nuestra respuesta en un plazo máximo de 3 días hábiles.</p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('pqr-form');
+            const successMessage = document.getElementById('success-message');
+            const errorMessage = document.getElementById('error-message');
+            const submitBtn = document.getElementById('submit-btn');
+            const retryBtn = document.getElementById('retry-btn');
+            const formContainer = document.querySelector('.form-container');
+            
+            // REPLACE WITH YOUR ACTUAL FORMSPREE ENDPOINT
+            const FORMSPREE_ENDPOINT = 'https://formspree.io/f/mqeekrkq';
+            
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Validate form
+                const email = document.getElementById('email').value;
+                const motivo = document.getElementById('motivo').value;
+                const asunto = document.getElementById('asunto').value;
+                
+                if (!email || !motivo || !asunto) {
+                    showError('Por favor complete todos los campos');
+                    return;
+                }
+                
+                if (!validateEmail(email)) {
+                    showError('Por favor ingrese un correo electrónico válido');
+                    return;
+                }
+                
+                // Show loading state
+                submitBtn.disabled = true;
+                const originalButtonText = submitBtn.textContent;
+                submitBtn.textContent = '';
+                
+                try {
+                    const response = await fetch(FORMSPREE_ENDPOINT, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            email: email,
+                            motivo: motivo,
+                            asunto: asunto
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        // Show success message
+                        form.reset();
+                        form.style.display = 'none';
+                        successMessage.style.display = 'block';
+                        window.scrollTo(0, 0);
+                    } else {
+                        const data = await response.json();
+                        throw new Error(data.error || 'Error al enviar el formulario');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showError(error.message || 'Error al enviar el formulario. Por favor, inténtalo de nuevo.');
+                } finally {
+                    // Reset button state
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalButtonText;
+                }
+            });
+            
+            retryBtn.addEventListener('click', function() {
+                form.style.display = 'block';
+                successMessage.style.display = 'none';
+                errorMessage.style.display = 'none';
+                errorMessage.textContent = '';
+                form.reset();
+            });
+            
+            function showError(message) {
+                errorMessage.textContent = message;
+                errorMessage.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Enviar Mensaje';
+            }
+            
+            function validateEmail(email) {
+                const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                return re.test(String(email).toLowerCase());
+            }
+        });
+    </script>
+</body>
+</html>
+
